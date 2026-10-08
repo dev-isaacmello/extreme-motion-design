@@ -1,0 +1,13 @@
+[
+ {
+  "file": "music.wav",
+  "checked_at": "2026-10-08T17:33:04",
+  "role": "music",
+  "title": "procedural calm 84 BPM em D",
+  "author": "gerado por scripts/music.py",
+  "license": "sem direitos de terceiros",
+  "seed": 7,
+  "bpm": 84,
+  "attribution": null
+ }
+]

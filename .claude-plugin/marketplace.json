@@ -1,0 +1,15 @@
+{
+  "name": "extreme-motion-design",
+  "description": "Skill Extreme Motion Design para Claude Code",
+  "owner": {
+    "name": "Isaac Mello",
+    "url": "https://github.com/dev-isaacmello"
+  },
+  "plugins": [
+    {
+      "name": "extreme-motion-design",
+      "source": "./",
+      "description": "Vídeos de motion design por código com trilha, narração e QA automático."
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+interface:
+  display_name: "Motion Design"
+  short_description: "Vídeos de motion design por código com trilha, narração e QA"
+  brand_color: "#FFB547"
+  default_prompt: "Use $extreme-motion-design para criar um vídeo de motion design de 20 segundos, 16:9, com narração suave em pt-BR, trilha calma e tipografia cinética sobre: "
+
+policy:
+  allow_implicit_invocation: true
