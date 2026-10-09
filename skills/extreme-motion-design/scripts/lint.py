@@ -117,6 +117,16 @@ def lint_code(src: pathlib.Path) -> list[dict]:
     return out
 
 
+def lint_env(root: pathlib.Path) -> list[dict]:
+    if not (root / ".env").is_file():
+        return []
+    gi = root / ".gitignore"
+    rules = [l.strip() for l in gi.read_text(encoding="utf-8").splitlines()] if gi.is_file() else []
+    if any(r in (".env", "/.env", ".env*", "*.env") for r in rules):
+        return []
+    return [{"level": "FAIL", "where": ".env", "msg": "há um .env e o .gitignore não o ignora: renomeie o gitignore do template para .gitignore"}]
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("timeline", nargs="?", default="public/timeline.json")
@@ -133,7 +143,7 @@ def main():
     words = json.loads(wp.read_text(encoding="utf-8"))["words"] if wp and wp.exists() else None
     src = pathlib.Path(a.src) if a.src else tlp.parent.parent / "src"
 
-    res = lint_score(tl, words) + (lint_code(src) if src.is_dir() else [])
+    res = lint_score(tl, words) + (lint_code(src) if src.is_dir() else []) + lint_env(tlp.resolve().parent.parent)
     fails = sum(r["level"] == "FAIL" for r in res)
     if a.json:
         print(json.dumps({"pass": not fails, "fails": fails, "warns": len(res) - fails, "issues": res}, ensure_ascii=False, indent=1))

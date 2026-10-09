@@ -2,6 +2,7 @@
 
 ```
 package.json, tsconfig.json, remotion.config.ts   o config já fixa colorSpace bt709
+gitignore                         vira .gitignore na cópia: ignora node_modules, out e .env
 public/timeline.json              partitura: fps, tamanho, duration, scenes, narration, music, sfx, loudness, audio
 public/audio/narration.words.json saída do tts.py (substitua pela sua)
 src/index.ts, src/Root.tsx        registra a composição a partir da partitura
@@ -19,7 +20,7 @@ src/scenes/Showcase.tsx           exemplo completo: 3 cenas ancoradas na narraç
 
 ## Como começar um vídeo novo
 
-1. Copie a pasta, rode `npm install`.
+1. Copie a pasta, renomeie `gitignore` para `.gitignore` e rode `npm install`. O arquivo vai sem o ponto porque alguns canais de instalação descartam arquivo oculto.
 2. Gere a narração em `public/audio/` (se houver voz), depois ajuste `public/timeline.json` (cenas a partir das frases) e rode `lint.py`.
 3. Crie as cenas em `src/scenes/` reaproveitando as primitivas; use `Showcase.tsx` como referência de estrutura e apague o que não usar.
 4. Para 9:16, mude `width` e `height` na partitura e revise a safe area.
