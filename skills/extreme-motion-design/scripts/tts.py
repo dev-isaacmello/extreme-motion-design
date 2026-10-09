@@ -247,6 +247,13 @@ def main():
     ap.add_argument("--normalize-only", default=None, help="só imprime o texto normalizado")
     a = ap.parse_args()
 
+    env = pathlib.Path(".env")
+    if env.is_file():  # chaves de API ficam no .env do projeto, fora do chat e do git
+        for line in env.read_text(encoding="utf-8").splitlines():
+            if "=" in line and not line.lstrip().startswith("#"):
+                k, v = line.split("=", 1)
+                os.environ.setdefault(k.strip().removeprefix("export ").strip(), v.strip().strip("'\""))
+
     lex = json.loads(LEXICON.read_text(encoding="utf-8")) if LEXICON.exists() else {}
     if a.normalize_only is not None:
         print(normalize_ptbr(a.normalize_only, lex))

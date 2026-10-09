@@ -1,0 +1,69 @@
+{
+ "checked": "2026-10-09",
+ "question": "Como você quer a voz deste vídeo?",
+ "elevenlabs": {
+  "check_url": "https://api.elevenlabs.io/v2/voices?page_size=10",
+  "key_page": "https://elevenlabs.io/app/settings/api-keys",
+  "key_steps": "Crie a chave em https://elevenlabs.io/app/settings/api-keys com as permissões Text to Speech (Access) e Voices (Read). Salve você mesmo em um arquivo .env na pasta do vídeo, na linha ELEVENLABS_API_KEY=sua_chave, e não cole a chave no chat.",
+  "cost_note": "o plano Free dá 10 mil créditos por mês e não inclui licença comercial; vídeo para cliente pede plano pago.",
+  "default_model": "eleven_multilingual_v2"
+ },
+ "models": [
+  {
+   "id": "chatterbox-pt-br", "name": "Chatterbox Multilingual pt-BR", "hf": "ResembleAI/Chatterbox-Multilingual-pt-br",
+   "license": "MIT", "commercial": true, "pt": "pt-BR declarado pelo autor (finetune dedicado)",
+   "vram_gb": 6, "ram_gb": 12, "cpu_ok": false, "disk_gb": 4, "timestamps": "não; rode align.py",
+   "install": "pip install chatterbox-tts",
+   "note": "Melhor candidato a voz de estúdio local em pt-BR com licença comercial. O autor não publica VRAM (terceiros citam 3,5 a 4 GB só para o TTS): os 6 GB livres pedidos aqui são margem nossa. Todo áudio sai com marca d'água PerTh."
+  },
+  {
+   "id": "kokoro", "name": "Kokoro-82M", "hf": "hexgrad/Kokoro-82M", "provider": "kokoro",
+   "license": "Apache-2.0", "commercial": true, "pt": "pt-BR declarado (vozes pf_dora, pm_alex, pm_santa)",
+   "vram_gb": 1, "ram_gb": 2, "threads": 2, "cpu_ok": true, "disk_gb": 0.5, "timestamps": "reais, direto do tts.py",
+   "install": "nenhuma: uv run scripts/tts.py baixa ~330 MB na primeira vez",
+   "note": "Roda em CPU mais rápido que tempo real e devolve tempo por palavra. Voz limpa e neutra, menos expressiva que os modelos grandes."
+  },
+  {
+   "id": "voxcpm2", "name": "VoxCPM2", "hf": "openbmb/VoxCPM2",
+   "license": "Apache-2.0", "commercial": true, "pt": "português genérico (30 idiomas)",
+   "vram_gb": 8, "ram_gb": 16, "cpu_ok": false, "accel_only": ["cuda"], "disk_gb": 8, "timestamps": "não; rode align.py",
+   "install": "pip install voxcpm",
+   "note": "2 B de parâmetros, cerca de 8 GB de VRAM declarados pelo autor, só CUDA. Sotaque brasileiro não é garantido: ouça uma frase antes."
+  },
+  {
+   "id": "qwen3-tts-0.6b", "name": "Qwen3-TTS 0.6B", "hf": "Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice",
+   "license": "Apache-2.0", "commercial": true, "pt": "português genérico, sem speaker nativo de português",
+   "vram_gb": 6, "ram_gb": 16, "cpu_ok": false, "accel_only": ["cuda"], "disk_gb": 5, "timestamps": "não; rode align.py",
+   "install": "pip install -U qwen-tts",
+   "note": "O autor não publica VRAM; 6 GB é estimativa nossa. Medido por nós com a variante 1.7B em GTX 1650 de 4 GB e 16 GB de RAM: 26 vezes mais lento que tempo real em CPU e morto por falta de memória. O sotaque em português precisou de audição humana."
+  },
+  {
+   "id": "pocket-tts", "name": "Pocket TTS", "hf": "kyutai-labs/pocket-tts",
+   "license": "MIT no código; licença dos pesos não confirmada", "commercial": null, "pt": "português genérico",
+   "vram_gb": 1, "ram_gb": 2, "threads": 2, "cpu_ok": true, "disk_gb": 1, "timestamps": "não; rode align.py",
+   "install": "pip install pocket-tts",
+   "note": "100 M de parâmetros, feito para CPU (o autor cita 2,3 a 6 vezes tempo real). Confira a licença dos pesos antes de uso comercial."
+  },
+  {
+   "id": "piper-pt-br", "name": "Piper (vozes pt_BR)", "hf": "rhasspy/piper-voices",
+   "license": "GPL-3.0 no código; licença varia por voz", "commercial": null, "pt": "pt_BR (cadu, edresson, faber, jeff)",
+   "vram_gb": 1, "ram_gb": 1, "threads": 1, "cpu_ok": true, "disk_gb": 0.2, "timestamps": "não; rode align.py",
+   "install": "pip install piper-tts",
+   "note": "O mais leve de todos, voz mais robótica. Leia o MODEL_CARD da voz escolhida antes de uso comercial."
+  },
+  {
+   "id": "f5-tts-pt-br", "name": "F5-TTS pt-BR", "hf": "firstpixel/F5-TTS-pt-br",
+   "license": "CC-BY-NC-4.0", "commercial": false, "pt": "pt-BR declarado",
+   "vram_gb": 6, "ram_gb": 16, "cpu_ok": false, "disk_gb": 3, "timestamps": "não; rode align.py",
+   "install": "pip install f5-tts",
+   "note": "Só uso pessoal. VRAM não publicada; 6 GB é estimativa nossa."
+  },
+  {
+   "id": "xtts-v2", "name": "XTTS-v2", "hf": "coqui/XTTS-v2",
+   "license": "Coqui Public Model License", "commercial": false, "pt": "português genérico",
+   "vram_gb": 6, "ram_gb": 16, "cpu_ok": false, "disk_gb": 3, "timestamps": "não; rode align.py",
+   "install": "pip install coqui-tts",
+   "note": "Só uso não comercial, inclusive do áudio gerado. VRAM não publicada; 6 GB é estimativa nossa."
+  }
+ ]
+}

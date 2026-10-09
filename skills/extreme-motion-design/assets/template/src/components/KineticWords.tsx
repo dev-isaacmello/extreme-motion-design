@@ -22,7 +22,8 @@ export const groupPhrases = (words: Word[], maxWords = 4, gap = 0.35): Word[][] 
 
 /**
  * Tipografia cinética sincronizada à narração (tempos de words.json).
- * Cada palavra sobe por uma máscara 3 frames antes de ser falada; a palavra falada ganha o acento.
+ * Cada palavra sobe por uma máscara `lead` frames antes de ser falada; a palavra falada ganha o acento.
+ * Com tempos vindos do align.py (que já adianta ~0,1 s), use lead={0}.
  */
 export const KineticWords: React.FC<{
 	words: Word[];
@@ -33,7 +34,8 @@ export const KineticWords: React.FC<{
 	top?: string;
 	maxWords?: number;
 	weight?: number;
-}> = ({words, offsetSec = 0, fontSize = 96, color = '#F5F2EA', accent = '#FFB547', top = '50%', maxWords = 4, weight = 700}) => {
+	lead?: number;
+}> = ({words, offsetSec = 0, lead = 3, fontSize = 96, color = '#F5F2EA', accent = '#FFB547', top = '50%', maxWords = 4, weight = 700}) => {
 	const frame = useCurrentFrame();
 	const {fps} = useVideoConfig();
 	const t = frame / fps - offsetSec;
@@ -67,7 +69,7 @@ export const KineticWords: React.FC<{
 				}}
 			>
 				{group.map((w, i) => {
-					const startF = Math.round((w.start + offsetSec) * fps) - 3;
+					const startF = Math.round((w.start + offsetSec) * fps) - lead;
 					const p = spring({frame: frame - startF, fps, config: springs.smooth, durationInFrames: 14});
 					const y = interpolate(p, [0, 1], [105, 0]) - exit * 105;
 					const spoken = t >= w.start - 0.02 && t <= w.end + 0.06;
