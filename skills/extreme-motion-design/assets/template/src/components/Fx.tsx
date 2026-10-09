@@ -38,3 +38,78 @@ export const Grain: React.FC<{opacity?: number; vignette?: number}> = ({opacity 
 		</AbsoluteFill>
 	);
 };
+
+/** Eco (trails): cópias atrasadas do mesmo desenho. `render` recebe o frame atrasado de cada cópia. */
+export const Echo: React.FC<{copies?: number; lag?: number; render: (frame: number, i: number) => React.ReactNode}> = ({
+	copies = 4,
+	lag = 2,
+	render,
+}) => {
+	const frame = useCurrentFrame();
+	return (
+		<>
+			{Array.from({length: copies}, (_, k) => copies - 1 - k).map((i) => (
+				<AbsoluteFill key={i} style={{opacity: i === 0 ? 1 : 0.5 * (1 - i / copies)}}>
+					{render(frame - i * lag, i)}
+				</AbsoluteFill>
+			))}
+		</>
+	);
+};
+
+/** Transição por forma: círculo que abre (progress 0 -> 1) revelando os filhos. Corte casado por cor chapada. */
+export const IrisReveal: React.FC<{progress: number; cx?: string; cy?: string; children: React.ReactNode}> = ({
+	progress,
+	cx = '50%',
+	cy = '50%',
+	children,
+}) => (
+	<AbsoluteFill style={{clipPath: `circle(${Math.max(0, progress) * 142}% at ${cx} ${cy})`}}>{children}</AbsoluteFill>
+);
+
+/** Revelação por máscara de linha (baseline reveal): o conteúdo sobe de trás de uma borda reta. */
+export const MaskReveal: React.FC<{progress: number; children: React.ReactNode; style?: React.CSSProperties}> = ({
+	progress,
+	children,
+	style,
+}) => (
+	<span style={{display: 'inline-block', overflow: 'hidden', verticalAlign: 'bottom', ...style}}>
+		<span style={{display: 'inline-block', transform: `translateY(${(1 - Math.min(1, Math.max(0, progress))) * 105}%)`}}>
+			{children}
+		</span>
+	</span>
+);
+
+/** Varredura de luz (shine) sobre os filhos: uma passada, progress 0 -> 1. Use uma vez, no logo ou no dado principal. */
+export const Shine: React.FC<{progress: number; angle?: number; width?: number; children: React.ReactNode}> = ({
+	progress,
+	angle = 24,
+	width = 20,
+	children,
+}) => {
+	const p = -width + progress * (100 + 2 * width);
+	const band = `linear-gradient(${90 + angle}deg, transparent ${p - width}%, rgba(255,255,255,0.75) ${p}%, transparent ${p + width}%)`;
+	return (
+		<span style={{position: 'relative', display: 'inline-block'}}>
+			{children}
+			<span
+				aria-hidden
+				style={{
+					position: 'absolute',
+					inset: 0,
+					backgroundImage: band,
+					mixBlendMode: 'overlay',
+					pointerEvents: 'none',
+				}}
+			/>
+		</span>
+	);
+};
+
+/** Filtro gooey para transição líquida: aplique com filter="url(#id)" no grupo de formas que se fundem. */
+export const GooeyFilter: React.FC<{id: string; blur?: number}> = ({id, blur = 14}) => (
+	<filter id={id}>
+		<feGaussianBlur in="SourceGraphic" stdDeviation={blur} result="b" />
+		<feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9" />
+	</filter>
+);

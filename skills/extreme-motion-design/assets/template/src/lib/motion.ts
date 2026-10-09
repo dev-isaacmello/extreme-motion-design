@@ -79,3 +79,65 @@ export const wiggle = (seed: string, frame: number, freq = 0.05, amp = 1) => noi
 /** Jitter de stop motion: só muda a cada `hold` frames. */
 export const jitter = (seed: string, frame: number, hold = 2, amp = 1) =>
 	(random(`${seed}-${Math.floor(frame / hold)}`) - 0.5) * 2 * amp;
+
+// ---------- Técnicas avançadas (references/techniques-advanced.md) ----------
+
+// Um único overshoot, sem oscilação: só no elemento em foco. Decelerate enfático para heróis de cena.
+export const easeX = {
+	overshoot: Easing.bezier(0.34, 1.56, 0.64, 1),
+	emphasized: Easing.bezier(0.05, 0.7, 0.1, 1),
+};
+
+/** Antecipação: recua `back` (fração do percurso) e só então parte para o alvo. */
+export const anticipate = (frame: number, start: number, length: number, from: number, to: number, back = 0.08) => {
+	const wind = Math.max(2, Math.round(length * 0.25));
+	const d = to - from;
+	return keys(frame, [start, start + wind, start + length], [from, from - d * back, to], [ease.settle, ease.enter]);
+};
+
+/** Follow-through e "follow the leader": o item i repete o líder com atraso (2 a 4 frames por nível). */
+export const lag = (frame: number, i: number, delay = 3) => frame - i * delay;
+
+/** Cascata para listas longas: os atrasos se comprimem no fim, e o total nunca passa de `total`. */
+export const cascade = (i: number, n: number, total: number, easing: (t: number) => number = Easing.out(Easing.quad)) =>
+	n <= 1 ? 0 : Math.round(easing(i / (n - 1)) * total);
+
+/** Squash e stretch preservando volume. amount > 0 estica em Y, < 0 achata. */
+export const squash = (amount: number) => {
+	const sy = 1 + amount;
+	return {sx: 1 / sy, sy};
+};
+
+/** Velocidade por frame de qualquer função do frame (para smear, blur direcional e conferência de curva). */
+export const velocity = (fn: (f: number) => number, frame: number) => fn(frame + 0.5) - fn(frame - 0.5);
+
+/** Smear: fator de esticamento na direção do movimento. 1 abaixo do limiar, até `max` no pico. */
+export const smear = (pxPerFrame: number, threshold = 40, max = 3) =>
+	Math.min(max, 1 + Math.max(0, Math.abs(pxPerFrame) - threshold) / threshold);
+
+/**
+ * Speed ramp (time remap): devolve o tempo local em frames dado um perfil de velocidade.
+ * speeds: [[frame, velocidade]], interpolado linearmente. Ex.: [[0, 4], [12, 0.25], [40, 1]].
+ */
+export const timeRemap = (frame: number, speeds: Array<[number, number]>) => {
+	let t = 0;
+	for (let i = 0; i < speeds.length; i++) {
+		const [f0, s0] = speeds[i];
+		const next = speeds[i + 1];
+		if (!next || frame <= next[0]) {
+			const dt = Math.max(0, frame - f0);
+			if (!next) return t + s0 * dt;
+			const s = s0 + ((next[1] - s0) * dt) / (next[0] - f0);
+			return t + ((s0 + s) / 2) * dt;
+		}
+		t += ((s0 + next[1]) / 2) * (next[0] - f0);
+	}
+	return t;
+};
+
+/** Onda triangular 0..1..0 (loopOut pingpong). */
+export const pingPong = (frame: number, period: number) => 1 - Math.abs(loopPhase(frame, period) * 2 - 1);
+
+/** Contador que assenta sem piscar: use com fontVariantNumeric 'tabular-nums'. */
+export const ticker = (frame: number, start: number, length: number, from: number, to: number) =>
+	Math.round(tween(frame, start, length, from, to, ease.settle));
