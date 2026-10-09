@@ -9,14 +9,17 @@
   uv run scripts/qa.py out/loop.mp4 --loop
   uv run scripts/qa.py out/video.mp4 --words public/audio/narration.words.json --lufs -14
   uv run scripts/qa.py out/video.mp4 --timeline public/timeline.json     # ritmo por cena
+  uv run scripts/qa.py out/video.mp4 --stills out/stills                 # confere o contraste contra os stills
 Verifica: codec/pixel format/fps/áudio, duração de áudio x vídeo, loudness integrado e true peak,
-flashes fotossensíveis (mais de 3 por segundo), trechos parados, frames pretos, emenda de loop
-e velocidade de leitura das legendas (caracteres por segundo).
+flashes fotossensíveis (mais de 3 por segundo), trechos parados, frames pretos, emenda de loop,
+velocidade de leitura das legendas (caracteres por segundo) e, com --stills, se o MP4 mantém o contraste
+dos stills (pega faixa de luma comprimida por reencode).
 """
 from __future__ import annotations
 
 import argparse
 import json
+import pathlib
 import re
 import subprocess
 import sys
@@ -49,6 +52,11 @@ def gray_frames(path, w=64, h=36):
     return np.frombuffer(raw, np.uint8).reshape(-1, h, w).astype(np.float32) / 255
 
 
+def gray_image(path, w=64, h=36):
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", path, "-vf", f"scale={w}:{h},format=gray", "-frames:v", "1", "-f", "rawvideo", "-"], capture_output=True, check=True).stdout
+    return np.frombuffer(raw, np.uint8).reshape(h, w).astype(np.float32) / 255
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("video")
@@ -59,6 +67,7 @@ def main():
     ap.add_argument("--max-cps", type=float, default=17.0)
     ap.add_argument("--timeline", default=None, help="timeline.json: mede o ritmo de movimento por cena")
     ap.add_argument("--static-sec", type=float, default=1.5, help="tempo máximo sem movimento")
+    ap.add_argument("--stills", default=None, help="pasta do stills.cjs: compara o contraste do MP4 com os stills")
     a = ap.parse_args()
     prof = PROFILES[a.profile]
     lufs_target = a.lufs if a.lufs is not None else prof["lufs"]
@@ -73,6 +82,7 @@ def main():
     check("video h264 yuv420p", v and v["codec_name"] == "h264" and v.get("pix_fmt") == "yuv420p", f"{v and v['codec_name']} {v and v.get('pix_fmt')}")
     if prof["w"]:
         check("resolução do perfil", v and (v["width"], v["height"]) == (prof["w"], prof["h"]), f"{v['width']}x{v['height']} (perfil {a.profile})", blocking=False)
+    check("cor marcada como BT.709", v and v.get("color_space") == "bt709", f"color_space={v and v.get('color_space', 'não marcado')}" + ("" if v and v.get("color_space") == "bt709" else ": renderize com --color-space=bt709"), blocking=False)
     check("fps padrão", round(fps, 3) in (24, 25, 30, 50, 60, 23.976, 29.97, 59.94), f"{fps:.3f}", blocking=False)
     check("tem áudio", au is not None, au["codec_name"] if au else "sem stream de áudio")
 
@@ -100,6 +110,19 @@ def main():
     win = int(round(fps)) or 30
     worst = max((sum(1 for f in flashes if k <= f < k + win) for k in range(0, len(mean), max(1, win // 2))), default=0)
     check("flashes por segundo <= 3", worst <= 3, f"pior janela: {worst}")
+
+    if a.stills:
+        # O still é a cor que o Chrome desenhou; o MP4 tem de devolver o mesmo preto e o mesmo branco.
+        d = pathlib.Path(a.stills)
+        idx = json.loads((d / "index.json").read_text(encoding="utf-8"))["stills"]
+        picks = [it for it in idx if it["frame"] < len(g)]
+        picks = picks[:: max(1, len(picks) // 6)][:6]
+        if picks:
+            ref = np.stack([gray_image(str(d / it["file"])) for it in picks])
+            got = np.stack([g[it["frame"]] for it in picks])
+            lo, hi = np.percentile(got, 1) - np.percentile(ref, 1), np.percentile(got, 99) - np.percentile(ref, 99)
+            err = float(np.abs(got - ref).mean())
+            check("contraste igual ao dos stills", err <= 0.02 and lo <= 0.025 and hi >= -0.025, f"erro médio {err * 255:.1f}/255, preto {lo * 255:+.0f}, branco {hi * 255:+.0f} ({len(picks)} frames)")
 
     motion = np.abs(np.diff(g, axis=0)).mean((1, 2))
     still = motion < 0.0015
