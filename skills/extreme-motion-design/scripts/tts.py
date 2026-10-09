@@ -255,6 +255,9 @@ def main():
                 os.environ.setdefault(k.strip().removeprefix("export ").strip(), v.strip().strip("'\""))
 
     lex = json.loads(LEXICON.read_text(encoding="utf-8")) if LEXICON.exists() else {}
+    local = pathlib.Path("lexicon.json")
+    if local.is_file():  # nomes de produto e marca ficam no projeto, não na skill
+        lex |= json.loads(local.read_text(encoding="utf-8"))
     if a.normalize_only is not None:
         print(normalize_ptbr(a.normalize_only, lex))
         return

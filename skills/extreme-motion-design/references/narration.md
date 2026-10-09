@@ -15,7 +15,7 @@ Junto com a opção de voz local, ofereça ouvir antes de decidir: `voice.py --a
 ## ElevenLabs
 
 1. **Chave**: o usuário cria em https://elevenlabs.io/app/settings/api-keys. A chave nasce restrita: precisa de Text to Speech (Access) e Voices (Read). Esses nomes vêm da central de ajuda; se a tela mostrar outros, vale a permissão de gerar fala e a de ler vozes.
-2. **Onde guardar**: o próprio usuário grava `ELEVENLABS_API_KEY=...` num arquivo `.env` na pasta do vídeo (o template já ignora `.env` no git). `tts.py` e `voice.py` leem esse arquivo. Nunca peça para colar a chave no chat e nunca a escreva em arquivo versionado, comando ou log.
+2. **Onde guardar**: o próprio usuário grava `ELEVENLABS_API_KEY=...` num arquivo `.env` na pasta do vídeo (o `.gitignore` do template ignora `.env`; o `lint.py` reprova o projeto que tem `.env` sem essa regra). `tts.py` e `voice.py` leem esse arquivo. Nunca peça para colar a chave no chat e nunca a escreva em arquivo versionado, comando ou log.
 3. **Validar sem gastar**: `python3 <skill>/scripts/voice.py --check-key` lista as vozes da conta. HTTP 401 é chave errada; 403 é permissão faltando.
 4. **Voz**: escolha com o usuário uma voz da lista devolvida, de sotaque brasileiro. O sotaque vem da voz, não de parâmetro. Não use as vozes Default: expiram em 31/12/2026 segundo a documentação.
 5. **Custo**: antes de gerar, diga quantos caracteres o roteiro tem e peça o sim. O plano Free dá 10 mil créditos por mês e não inclui licença comercial; vídeo para cliente pede plano pago.
@@ -63,7 +63,7 @@ uv run <skill>/scripts/align.py public/audio/narration.wav roteiro.txt
 ## Normalização pt-BR (automática no `tts.py`)
 
 - Expande R$ 1.234,56, 14h30, 10%, milhares, decimais e ordinais com `num2words`, corrigindo gênero (duas horas).
-- Léxico editável em `assets/lexicon.pt-BR.json` para siglas e estrangeirismos (IA, CEO, SaaS, nomes de produto). O script lista termos suspeitos.
+- Léxico em `assets/lexicon.pt-BR.json` para siglas e estrangeirismos (IA, CEO, SaaS). Nome de produto e de marca vai em um `lexicon.json` na pasta do vídeo, no mesmo formato, que soma ao da skill e vence em caso de conflito. O script lista termos suspeitos.
 - Confira antes de gerar: `tts.py --normalize-only "texto"`.
 - A tela mostra o texto original (`word`); a voz fala a forma normalizada (`spoken`).
 
