@@ -1,4 +1,22 @@
-# QA, dailies e entrega
+# QA, lint, dailies e entrega
+
+## Lint antes do render (`lint.py`, bloqueante em FAIL)
+
+`python3 <skill>/scripts/lint.py` na pasta do projeto lê `public/timeline.json`, o `words.json` da narração e `src/`. Roda em menos de 1 s, então rode a cada mudança de partitura ou de cena.
+
+| Verificação | Nível |
+|---|---|
+| Cenas com buraco, sobreposição ou fora da duração | FAIL |
+| Corte dentro de uma palavra falada; voz que termina depois do vídeo | FAIL |
+| SFX fora da duração | FAIL |
+| `Math.random`, relógio de parede, timers, `useFrame`, transição ou animação CSS, `Easing.bounce` e `Easing.elastic` | FAIL |
+| Corte que não casa com início de frase (tolerância de 0,25 s) | WARN |
+| Cena acima de 2,6 palavras por segundo; cena com menos de 1 s | WARN |
+| Todas as cenas com a mesma duração | WARN |
+| Dois SFX a menos de 0,12 s; menos de 1 s de quadro final depois da última palavra | WARN |
+| Curva criada fora de `lib/motion.ts`; tag HTML de mídia; emoji; muito mais `opacity` que transform | WARN |
+
+WARN é heurística: leia, decida e diga na entrega o que ficou.
 
 ## Dailies (antes do render final, obrigatório)
 
@@ -28,6 +46,9 @@
 | Flashes | no máximo 3 por segundo (aproximação da WCAG 2.3.1) |
 | Emenda de loop (`--loop`) | diferença entre último e primeiro frame no nível de um passo normal |
 | Avisos | resolução do perfil, fps padrão, trecho parado acima de 1,5 s, frames pretos, leitura acima de 17 cps |
+| Ritmo (`--timeline`) | por cena: energia de movimento, fração do tempo em respiro, maior respiro e posição do pico. Avisa cena sem respiro de 0,25 s, cena quase toda parada e peça sem contraste (cena mais agitada abaixo de 1,5x a mais calma) |
+
+O medidor de ritmo é um medidor, não um juiz: os limiares foram ajustados em um único vídeo real e servem para apontar onde olhar na folha de contato.
 
 ## Entrega
 

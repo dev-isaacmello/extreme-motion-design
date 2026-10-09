@@ -3,11 +3,12 @@
 # requires-python = ">=3.10"
 # dependencies = ["numpy"]
 # ///
-"""Gate de QA do MP4 final. Sai com código 1 se qualquer verificação bloqueante falhar.
+"""Gate de QA do MP4 final e medidor de ritmo por cena. Sai com código 1 se qualquer verificação bloqueante falhar.
 
   uv run scripts/qa.py out/video.mp4 --profile youtube
   uv run scripts/qa.py out/loop.mp4 --loop
   uv run scripts/qa.py out/video.mp4 --words public/audio/narration.words.json --lufs -14
+  uv run scripts/qa.py out/video.mp4 --timeline public/timeline.json     # ritmo por cena
 Verifica: codec/pixel format/fps/áudio, duração de áudio x vídeo, loudness integrado e true peak,
 flashes fotossensíveis (mais de 3 por segundo), trechos parados, frames pretos, emenda de loop
 e velocidade de leitura das legendas (caracteres por segundo).
@@ -56,6 +57,7 @@ def main():
     ap.add_argument("--loop", action="store_true", help="checa a emenda do último frame para o primeiro")
     ap.add_argument("--words", default=None, help="words.json da narração para medir leitura")
     ap.add_argument("--max-cps", type=float, default=17.0)
+    ap.add_argument("--timeline", default=None, help="timeline.json: mede o ritmo de movimento por cena")
     ap.add_argument("--static-sec", type=float, default=1.5, help="tempo máximo sem movimento")
     a = ap.parse_args()
     prof = PROFILES[a.profile]
@@ -114,6 +116,30 @@ def main():
         seam = np.abs(g[0] - g[-1]).mean()
         typical = np.median(motion) if len(motion) else 0
         check("emenda do loop", seam <= max(2.5 * typical, 0.004), f"diferença na emenda {seam:.4f} x passo típico {typical:.4f}")
+
+    if a.timeline:
+        # Ritmo: energia de movimento por cena, como um medidor de loudness para a imagem.
+        scenes = json.load(open(a.timeline, encoding="utf-8"))["scenes"]
+        ref = float(np.percentile(motion, 90)) or 1e-6
+        calm = motion < 0.2 * ref
+        means, rows = [], []
+        for s in scenes:
+            i0, i1 = int(s["start"] * fps), max(int(s["end"] * fps) - 1, int(s["start"] * fps) + 1)
+            seg, rest = motion[i0:i1], calm[i0:i1]
+            best = cur = 0
+            for c in rest:
+                cur = cur + 1 if c else 0
+                best = max(best, cur)
+            means.append(float(seg.mean()))
+            rows.append((s["id"], seg.mean() / ref, rest.mean(), best / fps, int(seg.argmax()) / max(len(seg), 1)))
+            check(f"respiro na cena {s['id']}", best / fps >= 0.25 or (s["end"] - s["start"]) < 1.5, f"maior respiro {best / fps:.2f}s (mínimo 0,25 s para dar tempo de ler)", blocking=False)
+            check(f"movimento na cena {s['id']}", rest.mean() <= 0.85, f"{rest.mean():.0%} da cena quase parada (máximo 85%)", blocking=False)
+        print("ritmo por cena (energia relativa, % em respiro, maior respiro, posição do pico):")
+        for r in rows:
+            print(f"      {r[0]:14s} {r[1]:5.2f}  {r[2]:4.0%}  {r[3]:4.2f}s  pico em {r[4]:.0%}")
+        if len(means) > 2:
+            ratio = max(means) / max(min(means), 1e-6)
+            check("contraste de ritmo entre cenas", ratio >= 1.5, f"cena mais agitada tem {ratio:.1f}x a energia da mais calma (mínimo 1,5x)", blocking=False)
 
     if a.words:
         words = json.load(open(a.words, encoding="utf-8"))["words"]
