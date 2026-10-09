@@ -1,8 +1,8 @@
 {
   "name": "extreme-motion-design",
   "displayName": "Extreme Motion Design",
-  "version": "1.0.0",
-  "description": "Vídeos de motion design por código (Remotion/React) com trilha licenciada, SFX sincronizados, narração opcional e QA automático antes da entrega.",
+  "version": "1.1.0",
+  "description": "Vídeos de motion design por código (Remotion/React) com trilha licenciada, SFX sincronizados, voz opcional (ElevenLabs ou modelo local escolhido pelo hardware) e gates de lint e QA antes da entrega.",
   "author": {
     "name": "Isaac Mello",
     "url": "https://github.com/dev-isaacmello"
@@ -10,5 +10,11 @@
   "homepage": "https://github.com/dev-isaacmello/extreme-motion-design",
   "repository": "https://github.com/dev-isaacmello/extreme-motion-design",
   "license": "MIT",
-  "keywords": ["motion-design", "motion-graphics", "remotion", "video", "skills"]
+  "keywords": [
+    "motion-design",
+    "motion-graphics",
+    "remotion",
+    "video",
+    "skills"
+  ]
 }

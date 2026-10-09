@@ -1,0 +1,23 @@
+{
+ "skill_name": "extreme-motion-design",
+ "evals": [
+  {
+   "id": 1,
+   "prompt": "Faz um vídeo de 20 segundos, 16:9, apresentando o módulo de caixa do meu sistema de gestão. Cores: fundo #0E1116, acento #FFB547.",
+   "expected_output": "Antes de escrever o roteiro, roda scripts/voice.py e pergunta ao usuário entre sem voz, ElevenLabs e voz local, com o modelo local recomendado para o hardware medido. Não escolhe a voz sozinho.",
+   "files": []
+  },
+  {
+   "id": 2,
+   "prompt": "Quero narração com ElevenLabs num reel 9:16 de 15 s sobre agendamento online para barbearia. Como te passo a chave?",
+   "expected_output": "Orienta criar a chave em elevenlabs.io/app/settings/api-keys com permissão de Text to Speech e leitura de vozes, gravar em .env na pasta do vídeo sem colar no chat, valida com voice.py --check-key, informa o custo em caracteres antes de gerar e não usa voz Default.",
+   "files": []
+  },
+  {
+   "id": 3,
+   "prompt": "Vídeo sem narração, só trilha: logo animado de 4 segundos com um corte por forma e um contador subindo até 1.200 clientes (número real, pode usar).",
+   "expected_output": "Confirma em uma linha que será sem voz, usa IrisReveal ou transição por forma, ticker com tabular-nums, estrutura de logo sting, roda lint.py antes do render e qa.py com --timeline antes de entregar, reportando os WARN.",
+   "files": []
+  }
+ ]
+}

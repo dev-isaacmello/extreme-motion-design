@@ -1,7 +1,7 @@
 {
   "name": "extreme-motion-design",
-  "version": "1.0.0",
-  "description": "Vídeos de motion design por código (Remotion/React) com trilha licenciada, SFX sincronizados, narração opcional e QA automático antes da entrega.",
+  "version": "1.1.0",
+  "description": "Vídeos de motion design por código (Remotion/React) com trilha licenciada, SFX sincronizados, voz opcional (ElevenLabs ou modelo local escolhido pelo hardware) e gates de lint e QA antes da entrega.",
   "author": {
     "name": "Isaac Mello",
     "url": "https://github.com/dev-isaacmello"
@@ -9,12 +9,18 @@
   "homepage": "https://github.com/dev-isaacmello/extreme-motion-design",
   "repository": "https://github.com/dev-isaacmello/extreme-motion-design",
   "license": "MIT",
-  "keywords": ["motion-design", "motion-graphics", "remotion", "video", "skills"],
+  "keywords": [
+    "motion-design",
+    "motion-graphics",
+    "remotion",
+    "video",
+    "skills"
+  ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Extreme Motion Design",
     "shortDescription": "Vídeos de motion design por código com trilha, narração e QA",
-    "longDescription": "Produz vídeo de motion design com Remotion e React: tipografia cinética, câmera 2.5D, morphing, rigging, tracking e 3D. Inclui trilha com licença verificada, efeitos sonoros sincronizados, narração opcional em pt-BR ou inglês e um gate de QA que roda antes da entrega.",
+    "longDescription": "Produz vídeo de motion design com Remotion e React: tipografia cinética, câmera 2.5D, morphing, rigging, tracking, 3D e técnicas avançadas de estúdio (antecipação, overshoot, speed ramp, match cut, transições por forma). Pergunta como você quer a voz (sem voz, ElevenLabs ou modelo local recomendado pelo seu hardware), usa trilha com licença verificada e roda lint e QA antes da entrega.",
     "developerName": "Isaac Mello",
     "category": "Design",
     "capabilities": [],
