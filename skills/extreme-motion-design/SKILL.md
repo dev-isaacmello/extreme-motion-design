@@ -4,7 +4,7 @@ description: Cria vídeos de motion design de nível de estúdio por código (Re
 license: MIT
 compatibility: Node 18+, Python 3.10+ (uv recomendado) e ffmpeg. Remotion é gratuito para indivíduos e empresas de até 3 pessoas; acima disso exige Company License. Rede opcional (trilha online, voz por API, download de modelos de voz). Voz local funciona em CPU; modelos maiores pedem GPU.
 metadata:
-  version: "1.2.0"
+  version: "1.2.1"
   author: "Isaac Mello"
 ---
 
