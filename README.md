@@ -16,10 +16,12 @@ O agente escreve o vídeo em código com Remotion e React, mas não enxerga o qu
 | Trilha e SFX | `music.py` busca faixa com licença verificada ou gera uma localmente. `sfx.py` sintetiza os efeitos |
 | Cenas | Construídas com as primitivas do template e a referência da técnica usada |
 | Lint | `lint.py` reprova corte dentro de palavra, API que faz o render divergir e curva proibida, e avisa de ritmo e SFX empilhado, em menos de 1 s |
-| Dailies | `contact_sheet.py` monta a grade de frames para revisão visual antes do render final |
-| Entrega | `mix.py`, render, `deliver.py` e `qa.py`, que também mede o ritmo de movimento por cena. Sem FAIL no QA, sai o MP4 com a folha de contato e os créditos |
+| Dailies | `stills.cjs` renderiza os frames-chave em lote e `contact_sheet.py` monta a grade para revisão visual, sem precisar de MP4 |
+| Entrega | `mix.py`, render com o backend gráfico que `gl.py` mediu como mais rápido, `deliver.py` sem reencode e `qa.py`, que mede o ritmo por cena e confere o contraste contra os stills. Sem FAIL no QA, sai o MP4 com a folha de contato e os créditos |
 
 Técnicas cobertas: keyframing, easing e springs, zoom, pan, whip pan e parallax, motion graphics, tipografia cinética, morphing, loop sem emenda, microinterações de UI, frame a frame, cel animation, stop motion, rigging com IK, lip sync, motion 3D, compositing, motion tracking, match moving e rotoscopia. Na versão 1.1 entraram antecipação, overshoot, follow-through, squash e stretch, smear, cascata, speed ramp, match cut, corte invisível, J-cut e L-cut, transição por forma e líquida, mattes, baseline reveal, contador, eco e varredura de luz, além de uma referência de direção (styleframes, estrutura de batidas, vídeo que funciona sem som, sinais de trabalho amador com teste).
+
+A versão 1.2 corrige a entrega, que reencodava o vídeo e comprimia a faixa de luma de um arquivo que já estava em faixa TV (preto acinzentado e branco sem brilho), e acelera o fluxo: stills em lote, escolha do backend gráfico por medição e aprovação do áudio antes do render.
 
 ## Instalação
 

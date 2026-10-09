@@ -4,7 +4,7 @@ description: Cria vídeos de motion design de nível de estúdio por código (Re
 license: MIT
 compatibility: Node 18+, Python 3.10+ (uv recomendado) e ffmpeg. Remotion é gratuito para indivíduos e empresas de até 3 pessoas; acima disso exige Company License. Rede opcional (trilha online, voz por API, download de modelos de voz). Voz local funciona em CPU; modelos maiores pedem GPU.
 metadata:
-  version: "1.1.0"
+  version: "1.2.0"
   author: "Isaac Mello"
 ---
 
@@ -12,7 +12,7 @@ metadata:
 
 Produz vídeo de motion design por código, com áudio e verificação. O agente não enxerga o vídeo enquanto escreve código: por isso o fluxo mede antes de renderizar (`lint.py`), obriga a olhar frames renderizados e só entrega depois de um gate numérico (`qa.py`).
 
-Caminhos são relativos à pasta desta skill (`<skill>`). Scripts com dependências declaram tudo inline (PEP 723): rode com `uv run <skill>/scripts/x.py`. `voice.py` e `lint.py` usam só a biblioteca padrão e rodam com `python3`.
+Caminhos são relativos à pasta desta skill (`<skill>`). Scripts com dependências declaram tudo inline (PEP 723): rode com `uv run <skill>/scripts/x.py`. `voice.py`, `lint.py` e `gl.py` usam só a biblioteca padrão e rodam com `python3`; `stills.cjs` roda com `node` na pasta do projeto.
 
 ## Fluxo obrigatório
 
@@ -22,19 +22,20 @@ Caminhos são relativos à pasta desta skill (`<skill>`). Scripts com dependênc
 4. **Roteiro e voz primeiro** (se houver voz): escreva o roteiro, gere o áudio pelo caminho escolhido e use os tempos reais das palavras. O áudio é o relógio; o visual se ajusta a ele, nunca o contrário.
 5. **Partitura**: preencha `public/timeline.json` (duração, cenas, narração, trilha, eventos de SFX, loudness). Fronteiras de cena saem do início das frases. Vídeo, mixagem, lint e QA leem este mesmo arquivo.
 6. **Trilha e SFX**: `music.py` (Incompetech, depois Openverse, depois geração local) e eventos de SFX na partitura. Todo arquivo baixado entra em `credits.json`. Detalhes em `references/audio.md`.
-7. **Direção antes de animar**: leia `references/direction.md` e a doutrina (`references/doctrine.md`). Faça 3 a 5 styleframes com `remotion still` e olhe cada um antes de animar.
+   **Aprovação do áudio (com voz)**: rode `mix.py` e entregue `public/audio/mix.wav` para o usuário ouvir antes do render final. Pedido que muda só a voz refaz voz, partitura e mix e volta para o usuário ouvir, sem render e sem folha de contato, até a voz ser aprovada.
+7. **Direção antes de animar**: leia `references/direction.md` e a doutrina (`references/doctrine.md`). Faça 3 a 5 styleframes com `stills.cjs --times` e olhe cada um antes de animar.
 8. **Cenas**: construa com as primitivas do template. Leia só a referência da técnica que for usar (roteador abaixo).
 9. **Lint (antes de todo render)**: `python3 <skill>/scripts/lint.py` na pasta do projeto. Corrija todo FAIL; avalie cada WARN.
-10. **Dailies**: render rápido, folha de contato e OLHE a imagem. Revise com o checklist de `references/qa.md`, corrija e repita até não haver FIX.
+10. **Dailies**: `node <skill>/scripts/stills.cjs <Composição>` gera os frames de início, meio e fim de cada cena em um processo só, e `contact_sheet.py --stills out/stills` monta a folha sem precisar de MP4. OLHE a imagem, revise com o checklist de `references/qa.md`, corrija e repita até não haver FIX. Para ver vários frames nunca chame `remotion still` em laço: cada chamada refaz o bundle e abre outro browser.
 11. **Mixagem, render, entrega e gate**:
     ```bash
     uv run <skill>/scripts/mix.py public/timeline.json
-    npx remotion render Showcase out/render.mp4 --codec=h264 --audio-codec=aac
+    npx remotion render Showcase out/render.mp4 --codec=h264 --audio-codec=aac --color-space=bt709 $(python3 <skill>/scripts/gl.py Showcase)
     uv run <skill>/scripts/deliver.py out/render.mp4 -o out/final.mp4
-    uv run <skill>/scripts/qa.py out/final.mp4 --profile youtube --timeline public/timeline.json --words public/audio/narration.words.json
+    uv run <skill>/scripts/qa.py out/final.mp4 --profile youtube --timeline public/timeline.json --words public/audio/narration.words.json --stills out/stills
     uv run <skill>/scripts/contact_sheet.py out/final.mp4 --timeline public/timeline.json -o out/sheet.png
     ```
-    Só entregue com `qa.py` sem FAIL. Entregue o MP4, a folha de contato e o texto de créditos, e diga o que ficou em WARN.
+    `gl.py` mede uma vez por projeto qual backend gráfico renderiza mais rápido com a mesma imagem e devolve a flag (ou nada). `deliver.py` copia o vídeo sem reencode quando o render já está certo. `--stills` faz o `qa.py` reprovar MP4 com contraste diferente dos stills. Só entregue com `qa.py` sem FAIL. Entregue o MP4, a folha de contato e o texto de créditos, e diga o que ficou em WARN.
 
 ## Regras inegociáveis
 

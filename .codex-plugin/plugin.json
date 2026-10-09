@@ -1,6 +1,6 @@
 {
   "name": "extreme-motion-design",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Vídeos de motion design por código (Remotion/React) com trilha licenciada, SFX sincronizados, voz opcional (ElevenLabs ou modelo local escolhido pelo hardware) e gates de lint e QA antes da entrega.",
   "author": {
     "name": "Isaac Mello",

@@ -1,7 +1,7 @@
 # Mapa do template (`assets/template/`)
 
 ```
-package.json, tsconfig.json, remotion.config.ts
+package.json, tsconfig.json, remotion.config.ts   o config já fixa colorSpace bt709
 public/timeline.json              partitura: fps, tamanho, duration, scenes, narration, music, sfx, loudness, audio
 public/audio/narration.words.json saída do tts.py (substitua pela sua)
 src/index.ts, src/Root.tsx        registra a composição a partir da partitura
@@ -23,4 +23,4 @@ src/scenes/Showcase.tsx           exemplo completo: 3 cenas ancoradas na narraç
 2. Gere a narração em `public/audio/` (se houver voz), depois ajuste `public/timeline.json` (cenas a partir das frases) e rode `lint.py`.
 3. Crie as cenas em `src/scenes/` reaproveitando as primitivas; use `Showcase.tsx` como referência de estrutura e apague o que não usar.
 4. Para 9:16, mude `width` e `height` na partitura e revise a safe area.
-5. `npx remotion studio` abre o preview interativo quando houver tela; num agente sem tela, use stills e a folha de contato.
+5. `npx remotion studio` abre o preview interativo quando houver tela; num agente sem tela, use `stills.cjs` e a folha de contato.

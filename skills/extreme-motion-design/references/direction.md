@@ -4,7 +4,7 @@ Motion bom é design bom que se move com motivo. Esta referência cobre as decis
 
 ## Ordem de produção
 
-1. **Styleframes**: 3 a 5 quadros estáticos (abertura, um por ideia principal, fecho). Renderize com `remotion still` e olhe. Cada um tem de funcionar como pôster: hierarquia, uma cor de acento, respiro. Se o quadro parado é fraco, animar não salva.
+1. **Styleframes**: 3 a 5 quadros estáticos (abertura, um por ideia principal, fecho). Renderize com `stills.cjs --times` e olhe. Cada um tem de funcionar como pôster: hierarquia, uma cor de acento, respiro. Se o quadro parado é fraco, animar não salva.
 2. **Animatic**: as cenas como blocos estáticos, já com a duração da partitura e o áudio. Rode `lint.py` aqui: é quando o ritmo ainda é barato de mudar.
 3. **Animação**: movimento primário de cada cena, depois secundário, depois ambiente.
 4. **Polimento**: curvas, holds, SFX nos pontos de impacto, grão. Só depois de o animatic passar.
