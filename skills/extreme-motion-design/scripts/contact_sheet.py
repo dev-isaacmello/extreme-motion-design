@@ -7,6 +7,7 @@
 
   uv run scripts/contact_sheet.py out/video.mp4 --timeline public/timeline.json -o out/sheet.png
   uv run scripts/contact_sheet.py out/video.mp4 --every 0.5 -o out/sheet.png
+  uv run scripts/contact_sheet.py --stills out/stills -o out/sheet.png     # a partir do stills.cjs, sem MP4
 Com --timeline, pega início (+0,15 s), meio e fim (-0,15 s) de cada cena: é onde entradas,
 saídas e cortes quebram. Depois abra a imagem e revise com o checklist de references/qa.md.
 """
@@ -28,7 +29,8 @@ def duration(path):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("video")
+    ap.add_argument("video", nargs="?")
+    ap.add_argument("--stills", help="pasta gerada pelo stills.cjs (dispensa o vídeo)")
     ap.add_argument("--timeline")
     ap.add_argument("--every", type=float, default=None)
     ap.add_argument("--times", default=None, help="lista em segundos: 0.5,1.2,3")
@@ -36,6 +38,16 @@ def main():
     ap.add_argument("--width", type=int, default=640)
     ap.add_argument("-o", "--out", default="out/contact_sheet.png")
     a = ap.parse_args()
+    if a.stills:
+        d = pathlib.Path(a.stills)
+        idx = json.loads((d / "index.json").read_text(encoding="utf-8"))["stills"]
+        tiles = []
+        for it in idx:
+            im = Image.open(d / it["file"]).convert("RGB")
+            tiles.append((it["t"], im.resize((a.width, round(im.height * a.width / im.width / 2) * 2))))
+        return save(tiles, a)
+    if not a.video:
+        ap.error("informe o vídeo ou --stills")
     total = duration(a.video)
     if a.times:
         times = [float(x) for x in a.times.split(",")]
@@ -54,6 +66,10 @@ def main():
             p = pathlib.Path(td) / f"{i}.png"
             subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{t:.3f}", "-i", a.video, "-frames:v", "1", "-vf", f"scale={a.width}:-2", str(p)], check=True)
             tiles.append((t, Image.open(p).convert("RGB")))
+    save(tiles, a)
+
+
+def save(tiles, a):
     w, h = tiles[0][1].size
     rows = (len(tiles) + a.cols - 1) // a.cols
     pad = 8
