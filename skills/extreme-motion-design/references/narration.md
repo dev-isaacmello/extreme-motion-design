@@ -19,7 +19,7 @@ Junto com a opção de voz local, ofereça ouvir antes de decidir: `voice.py --a
 3. **Validar sem gastar**: `python3 <skill>/scripts/voice.py --check-key` lista as vozes da conta. HTTP 401 é chave errada; 403 é permissão faltando.
 4. **Voz**: escolha com o usuário uma voz da lista devolvida, de sotaque brasileiro. O sotaque vem da voz, não de parâmetro. Não use as vozes Default: expiram em 31/12/2026 segundo a documentação.
 5. **Custo**: antes de gerar, diga quantos caracteres o roteiro tem e peça o sim. O plano Free dá 10 mil créditos por mês e não inclui licença comercial; vídeo para cliente pede plano pago.
-6. **Gerar**: `uv run <skill>/scripts/tts.py roteiro.txt -o public/audio/narration --provider elevenlabs --voice <voice_id>`.
+6. **Gerar**: ponha a voz no `roteiro.json` (`"voice": {"provider": "elevenlabs", "voice": "<voice_id>"}`) e rode `score.py --dry`, que dá o número exato de caracteres, e depois `score.py --yes`. Ele gera frase a frase, confere se cada áudio veio inteiro e igual ao texto, e só regera a frase que mudar (`references/score.md`). `tts.py --provider elevenlabs` continua valendo para um texto solto.
 
 Modelos (conferidos em 2026-10-09): o padrão do script é `eleven_multilingual_v2`, estável em texto longo e com tempos reais por caractere no endpoint `with-timestamps`. `eleven_v4` é o modelo principal atual e lista português do Brasil, mas o suporte a `with-timestamps` nele não foi confirmado: se usar `--model eleven_v4` e os tempos não vierem, gere o áudio e rode `align.py`. `eleven_turbo_v2_5` está descontinuado.
 
@@ -33,7 +33,7 @@ Regras de escolha embutidas:
 - Modelo de GPU só é recomendado se couber na VRAM livre. Placa de 4 GB fica no Kokoro em CPU: medimos um modelo de 1,7 B nessa faixa rodando 26 vezes mais lento que tempo real e morrendo por falta de memória.
 - Requisito de VRAM de Chatterbox e Qwen3-TTS é estimativa nossa, porque os autores não publicam. Por isso o teste abaixo é obrigatório.
 
-**Kokoro (integrado)**: `uv run <skill>/scripts/tts.py roteiro.txt -o public/audio/narration --voice pf_dora`. Vozes pt-BR: `pf_dora` (F), `pm_alex`, `pm_santa` (M). Inglês: `af_heart`, `af_bella`. Baixa cerca de 330 MB na primeira vez. `voice.py --bench` mede o fator de tempo real e o pico de RAM nesta máquina.
+**Kokoro (integrado)**: `"voice": {"provider": "kokoro", "voice": "pf_dora", "speed": 0.92}` no `roteiro.json` e `score.py`; ou, para um texto solto, `uv run <skill>/scripts/tts.py roteiro.txt -o public/audio/narration --voice pf_dora`. Vozes pt-BR: `pf_dora` (F), `pm_alex`, `pm_santa` (M). Inglês: `af_heart`, `af_bella`. Baixa cerca de 330 MB na primeira vez. `voice.py --bench` mede o fator de tempo real e o pico de RAM nesta máquina.
 
 **Qualquer outro modelo**: instale com o comando que o `voice.py` mostra, num ambiente isolado. Antes do roteiro inteiro, gere **uma frase** com limite de tempo (`timeout 300 ...`) e confira três coisas: terminou, levou menos de 5x a duração do áudio e soa brasileiro para o usuário. Se falhar em qualquer uma, volte para o Kokoro. Depois gere o WAV completo e crie os tempos:
 
@@ -52,7 +52,8 @@ uv run <skill>/scripts/align.py public/audio/narration.wav roteiro.txt
 
 - Com `align.py`, use `<KineticWords lead={0}>`: o adiantamento do Whisper já faz o papel dos 3 frames de antecipação.
 - `align.py` também confere a fala: `mismatch` conta palavras que o Whisper ouviu diferente do roteiro. Mais de 20% vira aviso e costuma ser pronúncia errada, texto trocado ou idioma errado (número e sigla escritos em forma curta também contam). Ele **não** distingue sotaque brasileiro de português europeu; isso só o ouvido do usuário decide.
-- Voz gravada por uma pessoa segue o mesmo caminho: WAV mais `align.py`.
+- Voz gravada por uma pessoa segue o mesmo caminho: WAV mais `align.py`. No roteiro ela entra como `"provider": "file"`.
+- Fala de uma filmagem, sem roteiro: `align.py filmagem.mp4 --transcribe -o public/audio/fala` escreve o que foi dito e os tempos. Corrija a grafia no `.txt` e alinhe de novo com ele.
 
 ## Ritmo
 

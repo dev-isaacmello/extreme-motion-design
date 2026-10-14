@@ -1,0 +1,134 @@
+{
+ "cuts": {
+  "kinetic": 0.0,
+  "morph-rig": 2.5,
+  "loop-ui": 6.6333
+ },
+ "ev": {
+  "morph1": 3.5,
+  "morph2": 5.1333,
+  "clique": 8.2667
+ },
+ "phrases": [
+  {
+   "scene": "kinetic",
+   "i": 0,
+   "start": 0.4,
+   "end": 2.207,
+   "text": "Movimento com intenção.",
+   "from": 0,
+   "to": 2
+  },
+  {
+   "scene": "morph-rig",
+   "i": 0,
+   "start": 2.707,
+   "end": 6.319,
+   "text": "Cada forma se transforma, encontra seu ritmo e respira.",
+   "from": 3,
+   "to": 11
+  },
+  {
+   "scene": "loop-ui",
+   "i": 0,
+   "start": 6.819,
+   "end": 9.542,
+   "text": "Isso é motion design, feito por código.",
+   "from": 12,
+   "to": 17
+  }
+ ],
+ "words": [
+  {
+   "word": "Movimento",
+   "start": 0.443,
+   "end": 1.108
+  },
+  {
+   "word": "com",
+   "start": 1.108,
+   "end": 1.33
+  },
+  {
+   "word": "intenção.",
+   "start": 1.33,
+   "end": 2.106
+  },
+  {
+   "word": "Cada",
+   "start": 2.742,
+   "end": 3.02
+  },
+  {
+   "word": "forma",
+   "start": 3.02,
+   "end": 3.368
+  },
+  {
+   "word": "se",
+   "start": 3.368,
+   "end": 3.507
+  },
+  {
+   "word": "transforma,",
+   "start": 3.507,
+   "end": 4.376
+  },
+  {
+   "word": "encontra",
+   "start": 4.376,
+   "end": 4.932
+  },
+  {
+   "word": "seu",
+   "start": 4.932,
+   "end": 5.141
+  },
+  {
+   "word": "ritmo",
+   "start": 5.141,
+   "end": 5.489
+  },
+  {
+   "word": "e",
+   "start": 5.489,
+   "end": 5.558
+  },
+  {
+   "word": "respira.",
+   "start": 5.558,
+   "end": 6.219
+  },
+  {
+   "word": "Isso",
+   "start": 6.861,
+   "end": 7.148
+  },
+  {
+   "word": "é",
+   "start": 7.148,
+   "end": 7.219
+  },
+  {
+   "word": "motion design,",
+   "start": 7.219,
+   "end": 8.259
+  },
+  {
+   "word": "feito",
+   "start": 8.259,
+   "end": 8.617
+  },
+  {
+   "word": "por",
+   "start": 8.617,
+   "end": 8.832
+  },
+  {
+   "word": "código.",
+   "start": 8.832,
+   "end": 9.442
+  }
+ ],
+ "beats": []
+}

@@ -30,4 +30,4 @@
 
 - Níveis de partida: narração 0 dB, trilha -14 a -18 dB com ducking de -10 dB sob a voz, SFX -12 a -17 dB.
 - `mix.py` faz ducking por envelope da voz (ataque 20 ms, release 400 ms) e normalização em duas passadas com ffmpeg `loudnorm`.
-- Alvos: YouTube, Reels, TikTok e LinkedIn -14 LUFS e true peak -1 dBTP (convenção de mercado; as plataformas não publicam alvo oficial, exceto o volume estável do YouTube). Podcast Apple -16 LUFS. O padrão da partitura é -14 LUFS e -1,5 dBTP.
+- Alvos: YouTube, Reels, TikTok e LinkedIn -14 LUFS e true peak -1 dBTP (convenção de mercado; as plataformas não publicam alvo oficial, exceto o volume estável do YouTube). Podcast Apple -16 LUFS. O padrão da partitura é -14 LUFS e -3 dBTP no WAV: a conversão para AAC devolve picos até 1,5 dB acima (medido em fala gravada baixa, que o `loudnorm` amplifica 13 dB: -1,3 dBTP no WAV virou -0,1 no MP4), e o `qa.py` mede o MP4.

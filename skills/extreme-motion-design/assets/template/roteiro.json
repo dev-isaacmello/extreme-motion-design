@@ -1,0 +1,85 @@
+{
+ "format": "youtube",
+ "fps": 30,
+ "start": 0.4,
+ "tail": 1.5,
+ "voice": {
+  "provider": "kokoro",
+  "voice": "pf_dora",
+  "lang": "pt-br",
+  "speed": 0.92
+ },
+ "music": {
+  "file": "audio/music.wav",
+  "gain_db": -14,
+  "duck_db": -10,
+  "fade_in": 0.4,
+  "fade_out": 1.2
+ },
+ "cut": {
+  "on": "phrase",
+  "lead": 0.2,
+  "sfx": {
+   "type": "whoosh",
+   "gain_db": -15,
+   "dur": 0.5,
+   "lead": 0.25
+  }
+ },
+ "loudness": {
+  "lufs": -14,
+  "tp": -3.0
+ },
+ "scenes": [
+  {
+   "id": "kinetic",
+   "say": [
+    {
+     "text": "Movimento com intenção."
+    }
+   ]
+  },
+  {
+   "id": "morph-rig",
+   "say": [
+    {
+     "text": "Cada forma se transforma, encontra seu ritmo e respira."
+    }
+   ],
+   "cues": {
+    "morph1": "word:transforma",
+    "morph2": "word:ritmo"
+   },
+   "sfx": [
+    {
+     "at": "morph1",
+     "type": "pop",
+     "gain_db": -17
+    },
+    {
+     "at": "morph2",
+     "type": "pop",
+     "gain_db": -17
+    }
+   ]
+  },
+  {
+   "id": "loop-ui",
+   "say": [
+    {
+     "text": "Isso é motion design, feito por código."
+    }
+   ],
+   "cues": {
+    "clique": "word:feito"
+   },
+   "sfx": [
+    {
+     "at": "clique",
+     "type": "click",
+     "gain_db": -11
+    }
+   ]
+  }
+ ]
+}

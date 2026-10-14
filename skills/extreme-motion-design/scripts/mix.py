@@ -7,7 +7,7 @@
 
   uv run scripts/mix.py public/timeline.json
 Lê (caminhos relativos à pasta do timeline.json):
-  duration, narration{file,start,gain_db}, music{file,gain_db,duck_db,fade_in,fade_out,start},
+  duration, narration{file,start,gain_db}, music{file,gain_db,duck_db,fade_in,fade_out,start,offset},
   sfx[{at,type|file,gain_db,dur,seed}], loudness{lufs,tp}, audio (arquivo de saída).
 Requer ffmpeg no PATH (decodifica qualquer formato e faz loudnorm em duas passadas).
 """
@@ -85,7 +85,7 @@ def main():
 
     mus = tl.get("music") or {}
     if mus.get("file"):
-        m = load(base / mus["file"])
+        m = load(base / mus["file"])[int(mus.get("offset", 0) * SR):]  # offset pula a introdução da faixa
         start = mus.get("start", 0)
         need = n - int(start * SR)
         if len(m) < need:  # repete com crossfade curto se a faixa for menor que o vídeo
