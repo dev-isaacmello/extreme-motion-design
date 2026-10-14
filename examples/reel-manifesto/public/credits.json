@@ -1,0 +1,16 @@
+[
+ {
+  "file": "music.mp3",
+  "checked_at": "2026-10-13T15:56:49",
+  "role": "music",
+  "title": "EDM Detection Mode",
+  "author": "Kevin MacLeod",
+  "source": "incompetech.com",
+  "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/EDM Detection Mode.mp3",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "bpm": "128",
+  "attribution": "\"EDM Detection Mode\" Kevin MacLeod (incompetech.com). Licensed under Creative Commons: By Attribution 4.0 License. http://creativecommons.org/licenses/by/4.0/",
+  "modifications": "cortada, com fades, ducking e normalização de loudness"
+ }
+]

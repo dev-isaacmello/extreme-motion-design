@@ -1,0 +1,348 @@
+{
+ "cuts": {
+  "nao": 0.0,
+  "codigo": 2.1333,
+  "frame": 4.9333,
+  "batida": 8.2333,
+  "tresd": 13.3667,
+  "revisor": 18.0667,
+  "fecho": 22.2667
+ },
+ "ev": {
+  "isto": 0.3333,
+  "nao": 0.6,
+  "edicao": 0.8333,
+  "codigo": 2.4667,
+  "frame": 5.4,
+  "calculado": 5.6667,
+  "corte": 8.7,
+  "batida": 9.1333,
+  "b1": 9.9333,
+  "cor": 13.5667,
+  "forma": 14.0667,
+  "tres": 14.4667,
+  "dim": 15.7667,
+  "revisor": 18.4333,
+  "erro": 19.7333,
+  "pass": 20.8,
+  "nome": 22.4333,
+  "motion": 22.8667,
+  "design": 23.2333,
+  "prompt": 24.4667,
+  "video": 25.5,
+  "assina": 26.5
+ },
+ "phrases": [
+  {
+   "scene": "nao",
+   "i": 0,
+   "start": 0.35,
+   "end": 1.477,
+   "text": "Isto não é edição.",
+   "from": 0,
+   "to": 3
+  },
+  {
+   "scene": "codigo",
+   "i": 0,
+   "start": 2.313,
+   "end": 3.034,
+   "text": "É código.",
+   "from": 4,
+   "to": 5
+  },
+  {
+   "scene": "frame",
+   "i": 0,
+   "start": 5.122,
+   "end": 6.45,
+   "text": "Cada frame, calculado.",
+   "from": 6,
+   "to": 8
+  },
+  {
+   "scene": "batida",
+   "i": 0,
+   "start": 8.419,
+   "end": 9.732,
+   "text": "Cada corte, na batida.",
+   "from": 9,
+   "to": 12
+  },
+  {
+   "scene": "tresd",
+   "i": 0,
+   "start": 13.551,
+   "end": 15.63,
+   "text": "Cor, forma e três dimensões.",
+   "from": 13,
+   "to": 17
+  },
+  {
+   "scene": "revisor",
+   "i": 0,
+   "start": 18.241,
+   "end": 20.065,
+   "text": "E um revisor que não deixa passar erro.",
+   "from": 18,
+   "to": 25
+  },
+  {
+   "scene": "fecho",
+   "i": 0,
+   "start": 22.444,
+   "end": 23.902,
+   "text": "Extreme Motion Design.",
+   "from": 26,
+   "to": 28
+  },
+  {
+   "scene": "fecho",
+   "i": 1,
+   "start": 24.302,
+   "end": 25.069,
+   "text": "Um prompt.",
+   "from": 29,
+   "to": 30
+  },
+  {
+   "scene": "fecho",
+   "i": 2,
+   "start": 25.369,
+   "end": 25.979,
+   "text": "Um vídeo.",
+   "from": 31,
+   "to": 32
+  }
+ ],
+ "words": [
+  {
+   "word": "Isto",
+   "start": 0.35,
+   "end": 0.54
+  },
+  {
+   "word": "não",
+   "start": 0.598,
+   "end": 0.678
+  },
+  {
+   "word": "é",
+   "start": 0.748,
+   "end": 0.794
+  },
+  {
+   "word": "edição.",
+   "start": 0.83,
+   "end": 1.665
+  },
+  {
+   "word": "É",
+   "start": 2.313,
+   "end": 2.406
+  },
+  {
+   "word": "código.",
+   "start": 2.464,
+   "end": 3.195
+  },
+  {
+   "word": "Cada",
+   "start": 5.122,
+   "end": 5.345
+  },
+  {
+   "word": "frame,",
+   "start": 5.391,
+   "end": 5.635
+  },
+  {
+   "word": "calculado.",
+   "start": 5.658,
+   "end": 6.68
+  },
+  {
+   "word": "Cada",
+   "start": 8.419,
+   "end": 8.651
+  },
+  {
+   "word": "corte,",
+   "start": 8.709,
+   "end": 9.011
+  },
+  {
+   "word": "na",
+   "start": 9.034,
+   "end": 9.092
+  },
+  {
+   "word": "batida.",
+   "start": 9.127,
+   "end": 9.952
+  },
+  {
+   "word": "Cor,",
+   "start": 13.551,
+   "end": 13.941
+  },
+  {
+   "word": "forma",
+   "start": 14.057,
+   "end": 14.394
+  },
+  {
+   "word": "e",
+   "start": 14.417,
+   "end": 14.44
+  },
+  {
+   "word": "três",
+   "start": 14.475,
+   "end": 14.707
+  },
+  {
+   "word": "dimensões.",
+   "start": 14.731,
+   "end": 15.776
+  },
+  {
+   "word": "E",
+   "start": 18.241,
+   "end": 18.287
+  },
+  {
+   "word": "um",
+   "start": 18.345,
+   "end": 18.392
+  },
+  {
+   "word": "revisor",
+   "start": 18.426,
+   "end": 18.74
+  },
+  {
+   "word": "que",
+   "start": 18.798,
+   "end": 18.868
+  },
+  {
+   "word": "não",
+   "start": 18.902,
+   "end": 19.053
+  },
+  {
+   "word": "deixa",
+   "start": 19.1,
+   "end": 19.344
+  },
+  {
+   "word": "passar",
+   "start": 19.39,
+   "end": 19.657
+  },
+  {
+   "word": "erro.",
+   "start": 19.727,
+   "end": 20.261
+  },
+  {
+   "word": "Extreme",
+   "start": 22.444,
+   "end": 22.848
+  },
+  {
+   "word": "Motion",
+   "start": 22.871,
+   "end": 23.184
+  },
+  {
+   "word": "Design.",
+   "start": 23.231,
+   "end": 24.02
+  },
+  {
+   "word": "Um",
+   "start": 24.302,
+   "end": 24.43
+  },
+  {
+   "word": "prompt.",
+   "start": 24.476,
+   "end": 25.184
+  },
+  {
+   "word": "Um",
+   "start": 25.369,
+   "end": 25.462
+  },
+  {
+   "word": "vídeo.",
+   "start": 25.508,
+   "end": 26.158
+  }
+ ],
+ "beats": [
+  0.252,
+  0.739,
+  1.204,
+  1.645,
+  2.133,
+  2.62,
+  3.061,
+  3.526,
+  4.013,
+  4.478,
+  4.942,
+  5.407,
+  5.894,
+  6.359,
+  6.823,
+  7.264,
+  7.752,
+  8.239,
+  8.704,
+  9.145,
+  9.633,
+  10.12,
+  10.561,
+  11.026,
+  11.513,
+  11.978,
+  12.442,
+  12.907,
+  13.371,
+  13.859,
+  14.323,
+  14.764,
+  15.252,
+  15.739,
+  16.204,
+  16.645,
+  17.133,
+  17.62,
+  18.061,
+  18.526,
+  19.013,
+  19.478,
+  19.942,
+  20.407,
+  20.871,
+  21.359,
+  21.823,
+  22.264,
+  22.752,
+  23.239,
+  23.704,
+  24.145,
+  24.633,
+  25.12,
+  25.561,
+  26.026,
+  26.513,
+  26.978,
+  27.442,
+  27.907,
+  28.371
+ ]
+}

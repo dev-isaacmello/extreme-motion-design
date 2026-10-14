@@ -1,0 +1,61 @@
+{
+ "concept": "Um manifesto de 28 segundos: isto não é edição, é código. Cada frase destrava uma prova na tela, do mais contido ao mais exagerado, e o contador de frames nunca mente.",
+ "law": "Cada cena é um pôster de duas cores tiradas de uma paleta de cinco, e a cor troca no corte. Tipografia condensada gigante à esquerda; o que prova a frase ocupa o resto. Laranja é sempre a palavra que carrega a negação, o erro ou o nome.",
+ "motif": "O contador de frames no canto: mostra o frame real que está na tela. Na abertura é rodapé técnico, na cena do frame vira o herói em números de 500 px, na da batida vira o número do corte e no fecho assina.",
+ "options": [
+  {
+   "name": "A",
+   "idea": "Minimalismo suíço: preto e branco, um único laranja, grade rígida e movimento só de máscara."
+  },
+  {
+   "name": "B",
+   "idea": "Pôster maximalista: duas cores por cena, tipografia condensada gigante, cortes na batida e uma prova diferente por frase."
+  }
+ ],
+ "chosen": "B",
+ "approved_by": "agent",
+ "scenes": [
+  {
+   "id": "nao",
+   "layout": "três linhas gigantes empilhadas à esquerda sobre preto",
+   "entrance": "máscara por palavra",
+   "hero": "a palavra NÃO"
+  },
+  {
+   "id": "codigo",
+   "layout": "título no alto, janela de código no meio, faixa inclinada embaixo",
+   "entrance": "corte seco na entrada forte da trilha",
+   "hero": "a janela digitando o código da própria cena"
+  },
+  {
+   "id": "frame",
+   "layout": "número de 500 px sobre grade de células em tela cheia",
+   "entrance": "cascata de células, uma por frame",
+   "hero": "o contador"
+  },
+  {
+   "id": "batida",
+   "layout": "uma forma gigante no centro e o número do corte sangrando embaixo",
+   "entrance": "troca de pôster a cada batida",
+   "hero": "a forma que muda de espécie"
+  },
+  {
+   "id": "tresd",
+   "layout": "palavras empilhadas à esquerda, sólidos 3D à direita",
+   "entrance": "sólidos chapados que ganham luz e volume",
+   "hero": "os quatro sólidos"
+  },
+  {
+   "id": "revisor",
+   "layout": "título, lista de terminal e carimbo inclinado",
+   "entrance": "linhas de terminal em cascata",
+   "hero": "o carimbo PASS"
+  },
+  {
+   "id": "fecho",
+   "layout": "nome em três linhas e duas etiquetas coloridas",
+   "entrance": "anéis das cinco cores em íris",
+   "hero": "o nome"
+  }
+ ]
+}

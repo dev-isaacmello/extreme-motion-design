@@ -1,0 +1,190 @@
+{
+ "fps": 30,
+ "width": 1080,
+ "height": 1920,
+ "duration": 28.6667,
+ "audio": "audio/mix.wav",
+ "narration": {
+  "file": "audio/narration.wav",
+  "start": 0,
+  "gain_db": 0
+ },
+ "music": {
+  "gain_db": -13,
+  "duck_db": -7,
+  "fade_in": 0.05,
+  "fade_out": 1.2,
+  "file": "audio/music.mp3",
+  "offset": 12.914
+ },
+ "scenes": [
+  {
+   "id": "nao",
+   "start": 0.0,
+   "end": 2.1333
+  },
+  {
+   "id": "codigo",
+   "start": 2.1333,
+   "end": 4.9333
+  },
+  {
+   "id": "frame",
+   "start": 4.9333,
+   "end": 8.2333
+  },
+  {
+   "id": "batida",
+   "start": 8.2333,
+   "end": 13.3667
+  },
+  {
+   "id": "tresd",
+   "start": 13.3667,
+   "end": 18.0667
+  },
+  {
+   "id": "revisor",
+   "start": 18.0667,
+   "end": 22.2667
+  },
+  {
+   "id": "fecho",
+   "start": 22.2667,
+   "end": 28.6667
+  }
+ ],
+ "sfx": [
+  {
+   "at": 0.6,
+   "type": "impact",
+   "gain_db": -12
+  },
+  {
+   "at": 1.933,
+   "type": "whoosh",
+   "gain_db": -19,
+   "dur": 0.4
+  },
+  {
+   "at": 2.467,
+   "type": "impact",
+   "gain_db": -10
+  },
+  {
+   "at": 2.967,
+   "type": "tick",
+   "gain_db": -16
+  },
+  {
+   "at": 3.233,
+   "type": "tick",
+   "gain_db": -16
+  },
+  {
+   "at": 3.467,
+   "type": "tick",
+   "gain_db": -16
+  },
+  {
+   "at": 4.733,
+   "type": "whoosh",
+   "gain_db": -19,
+   "dur": 0.4
+  },
+  {
+   "at": 5.4,
+   "type": "pop",
+   "gain_db": -15
+  },
+  {
+   "at": 5.667,
+   "type": "shimmer",
+   "gain_db": -16
+  },
+  {
+   "at": 8.033,
+   "type": "whoosh",
+   "gain_db": -19,
+   "dur": 0.4
+  },
+  {
+   "at": 8.7,
+   "type": "click",
+   "gain_db": -12
+  },
+  {
+   "at": 13.167,
+   "type": "whoosh",
+   "gain_db": -19,
+   "dur": 0.4
+  },
+  {
+   "at": 13.567,
+   "type": "pop",
+   "gain_db": -15
+  },
+  {
+   "at": 14.067,
+   "type": "pop",
+   "gain_db": -15
+  },
+  {
+   "at": 14.467,
+   "type": "impact",
+   "gain_db": -11
+  },
+  {
+   "at": 17.867,
+   "type": "whoosh",
+   "gain_db": -19,
+   "dur": 0.4
+  },
+  {
+   "at": 19.733,
+   "type": "click",
+   "gain_db": -12
+  },
+  {
+   "at": 20.8,
+   "type": "impact",
+   "gain_db": -10
+  },
+  {
+   "at": 21.333,
+   "type": "riser",
+   "gain_db": -22,
+   "dur": 1.1
+  },
+  {
+   "at": 22.067,
+   "type": "whoosh",
+   "gain_db": -19,
+   "dur": 0.4
+  },
+  {
+   "at": 22.433,
+   "type": "impact",
+   "gain_db": -9
+  },
+  {
+   "at": 24.467,
+   "type": "pop",
+   "gain_db": -14
+  },
+  {
+   "at": 25.5,
+   "type": "pop",
+   "gain_db": -14
+  },
+  {
+   "at": 26.5,
+   "type": "shimmer",
+   "gain_db": -15
+  }
+ ],
+ "loudness": {
+  "lufs": -14,
+  "tp": -3.0
+ }
+}

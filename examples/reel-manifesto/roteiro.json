@@ -1,0 +1,262 @@
+{
+ "format": "reels",
+ "fps": 30,
+ "start": 0.35,
+ "tail": 2.4,
+ "voice": {
+  "provider": "elevenlabs",
+  "voice": "RGymW84CSmfVugnA5tvA",
+  "model": "eleven_multilingual_v2",
+  "settings": {
+   "stability": 0.3,
+   "similarity_boost": 0.75,
+   "style": 0.6
+  },
+  "seed": 11
+ },
+ "music": {
+  "file": "audio/music.mp3",
+  "gain_db": -13,
+  "duck_db": -7,
+  "fade_in": 0.05,
+  "fade_out": 1.2,
+  "offset": 12.914
+ },
+ "cut": {
+  "on": "beat",
+  "lead": 0.18,
+  "sfx": {
+   "type": "whoosh",
+   "gain_db": -19,
+   "dur": 0.4,
+   "lead": 0.2
+  }
+ },
+ "loudness": {
+  "lufs": -14,
+  "tp": -3.0
+ },
+ "scenes": [
+  {
+   "id": "nao",
+   "cut_sfx": false,
+   "hold": 0.45,
+   "say": [
+    {
+     "text": "Isto não é edição.",
+     "closed": true
+    }
+   ],
+   "cues": {
+    "isto": "word:Isto",
+    "nao": "word:não",
+    "edicao": "word:edição"
+   },
+   "sfx": [
+    {
+     "at": "nao",
+     "type": "impact",
+     "gain_db": -12
+    }
+   ]
+  },
+  {
+   "id": "codigo",
+   "hold": 1.5,
+   "say": [
+    {
+     "text": "É código.",
+     "closed": true
+    }
+   ],
+   "cues": {
+    "codigo": "word:código"
+   },
+   "sfx": [
+    {
+     "at": "codigo",
+     "type": "impact",
+     "gain_db": -10
+    },
+    {
+     "at": "cue:codigo+0.5",
+     "type": "tick",
+     "gain_db": -16
+    },
+    {
+     "at": "cue:codigo+0.75",
+     "type": "tick",
+     "gain_db": -16
+    },
+    {
+     "at": "cue:codigo+1.0",
+     "type": "tick",
+     "gain_db": -16
+    }
+   ]
+  },
+  {
+   "id": "frame",
+   "hold": 1.5,
+   "say": [
+    {
+     "text": "Cada frame, calculado.",
+     "closed": true
+    }
+   ],
+   "cues": {
+    "frame": "word:frame",
+    "calculado": "word:calculado"
+   },
+   "sfx": [
+    {
+     "at": "frame",
+     "type": "pop",
+     "gain_db": -15
+    },
+    {
+     "at": "calculado",
+     "type": "shimmer",
+     "gain_db": -16
+    }
+   ]
+  },
+  {
+   "id": "batida",
+   "hold": 3.4,
+   "say": [
+    {
+     "text": "Cada corte, na batida.",
+     "closed": true
+    }
+   ],
+   "cues": {
+    "corte": "word:corte",
+    "batida": "word:batida",
+    "b1": "phrase:1.end+0.2"
+   },
+   "sfx": [
+    {
+     "at": "corte",
+     "type": "click",
+     "gain_db": -12
+    }
+   ]
+  },
+  {
+   "id": "tresd",
+   "hold": 2.2,
+   "say": [
+    {
+     "text": "Cor, forma e três dimensões.",
+     "closed": true
+    }
+   ],
+   "cues": {
+    "cor": "word:Cor",
+    "forma": "word:forma",
+    "tres": "word:três",
+    "dim": "word:dimensões.end"
+   },
+   "sfx": [
+    {
+     "at": "cor",
+     "type": "pop",
+     "gain_db": -15
+    },
+    {
+     "at": "forma",
+     "type": "pop",
+     "gain_db": -15
+    },
+    {
+     "at": "tres",
+     "type": "impact",
+     "gain_db": -11
+    }
+   ]
+  },
+  {
+   "id": "revisor",
+   "hold": 1.9,
+   "say": [
+    {
+     "text": "E um revisor que não deixa passar erro.",
+     "closed": true
+    }
+   ],
+   "cues": {
+    "revisor": "word:revisor",
+    "erro": "word:erro",
+    "pass": "word:erro.end+0.55"
+   },
+   "sfx": [
+    {
+     "at": "erro",
+     "type": "click",
+     "gain_db": -12
+    },
+    {
+     "at": "pass",
+     "type": "impact",
+     "gain_db": -10
+    }
+   ]
+  },
+  {
+   "id": "fecho",
+   "say": [
+    {
+     "text": "Extreme Motion Design.",
+     "closed": true
+    },
+    {
+     "text": "Um prompt.",
+     "pause": 0.4,
+     "closed": true
+    },
+    {
+     "text": "Um vídeo.",
+     "pause": 0.3,
+     "closed": true
+    }
+   ],
+   "cues": {
+    "nome": "word:Extreme",
+    "motion": "word:Motion",
+    "design": "word:Design",
+    "prompt": "word:prompt",
+    "video": "word:vídeo",
+    "assina": "word:vídeo.end+0.35"
+   },
+   "sfx": [
+    {
+     "at": "cue:nome-1.1",
+     "type": "riser",
+     "gain_db": -22,
+     "dur": 1.1
+    },
+    {
+     "at": "nome",
+     "type": "impact",
+     "gain_db": -9
+    },
+    {
+     "at": "prompt",
+     "type": "pop",
+     "gain_db": -14
+    },
+    {
+     "at": "video",
+     "type": "pop",
+     "gain_db": -14
+    },
+    {
+     "at": "assina",
+     "type": "shimmer",
+     "gain_db": -15
+    }
+   ]
+  }
+ ]
+}
