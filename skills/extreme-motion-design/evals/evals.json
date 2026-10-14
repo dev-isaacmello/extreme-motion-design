@@ -18,6 +18,30 @@
    "prompt": "Vídeo sem narração, só trilha: logo animado de 4 segundos com um corte por forma e um contador subindo até 1.200 clientes (número real, pode usar).",
    "expected_output": "Confirma em uma linha que será sem voz, usa IrisReveal ou transição por forma, ticker com tabular-nums, estrutura de logo sting, roda lint.py antes do render e qa.py com --timeline antes de entregar, reportando os WARN.",
    "files": []
+  },
+  {
+   "id": 4,
+   "prompt": "Reel 9:16 de 20 s apresentando o meu app de agendamento. O site é https://exemplo.com.br e pode escolher o visual, só não quero narração.",
+   "expected_output": "Roda scripts/brand.py --url antes de escolher cor ou fonte e usa o brand.json gerado. Confirma em uma linha que será sem voz. Monta de 2 a 3 direções como styleframes e, como o pedido delegou a escolha, grava direction.json com approved_by agent e diz isso na entrega. Escreve roteiro.json e roda score.py em vez de escrever frames nas cenas. Roda lint.py, stills.cjs e layout.py antes do render e entrega a folha a um revisor de contexto limpo.",
+   "files": []
+  },
+  {
+   "id": 5,
+   "prompt": "Ficou bom, mas troca o texto da cena do preço e sobe um pouco o logo no final. Não precisa mexer no resto.",
+   "expected_output": "Edita só as cenas citadas, confere com stills.cjs --times nos instantes alterados e layout.py, e refaz o master com render.cjs --scene <ids> em vez de um render completo. Informa quantos renders completos já foram gastos do orçamento.",
+   "files": []
+  },
+  {
+   "id": 6,
+   "prompt": "Quero um vídeo de lançamento parecido com este aqui (anexo: referencia.mp4), mas com a minha marca e o meu texto.",
+   "expected_output": "Roda reference.py analyze no arquivo e olha a folha. Usa reference.py plan para montar o roteiro com os tempos da referência. Reproduz estrutura, ritmo e técnica e não usa nenhum frame, logo, texto, trilha ou voz da referência. No fim roda reference.py compare com --timeline (e --skip cor, porque a marca manda na paleta) e informa a nota de fidelidade e o eixo mais baixo.",
+   "files": []
+  },
+  {
+   "id": 7,
+   "prompt": "Faz um vídeo de 30 s sobre trilhas no Brasil com imagens reais, sem eu precisar dar crédito para ninguém.",
+   "expected_output": "Busca material com stock.py em fonte de licença livre, lista antes de baixar, olha cada arquivo, evita rosto reconhecível e marca, e registra a origem em credits.json. Não baixa de plataforma que proíbe script. Propõe direções a partir de references/design.md e roda design.py nos stills antes do render.",
+   "files": []
   }
  ]
 }
