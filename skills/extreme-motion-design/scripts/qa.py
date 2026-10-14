@@ -11,7 +11,7 @@
   uv run scripts/qa.py out/video.mp4 --timeline public/timeline.json     # ritmo por cena
   uv run scripts/qa.py out/video.mp4 --stills out/stills                 # confere o contraste contra os stills
 Verifica: codec/pixel format/fps/áudio, duração de áudio x vídeo, loudness integrado e true peak,
-flashes fotossensíveis (mais de 3 por segundo), trechos parados, frames pretos, emenda de loop,
+flashes fotossensíveis (mais de 3 por segundo), pop de 1 frame, trechos parados, frames pretos, emenda de loop,
 velocidade de leitura das legendas (caracteres por segundo) e, com --stills, se o MP4 mantém o contraste
 dos stills (pega faixa de luma comprimida por reencode).
 """
@@ -52,9 +52,15 @@ def gray_frames(path, w=64, h=36):
     return np.frombuffer(raw, np.uint8).reshape(-1, h, w).astype(np.float32) / 255
 
 
-def gray_image(path, w=64, h=36):
-    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", path, "-vf", f"scale={w}:{h},format=gray", "-frames:v", "1", "-f", "rawvideo", "-"], capture_output=True, check=True).stdout
-    return np.frombuffer(raw, np.uint8).reshape(h, w).astype(np.float32) / 255
+def luma_image(path, frame=None, w=64, h=36):
+    """Luma BT.709 calculada do RGB, igual para PNG e MP4. O format=gray do ffmpeg usa pesos BT.601 no PNG e o Y do
+    arquivo no MP4: em cor saturada (laranja, limão, azul) os dois divergem sem que o vídeo esteja errado.
+    No MP4 o frame é escolhido pelo número (select), não por tempo: o seek pode cair no frame vizinho."""
+    pick = [f"select=eq(n\\,{int(frame)})"] if frame is not None else []
+    vf = ",".join(pick + [f"scale={w}:{h}:flags=area"])
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", path, "-vf", vf, "-frames:v", "1", "-pix_fmt", "rgb24", "-f", "rawvideo", "-"], capture_output=True, check=True).stdout
+    rgb = np.frombuffer(raw, np.uint8).reshape(h, w, 3).astype(np.float32) / 255
+    return rgb @ np.array([0.2126, 0.7152, 0.0722], np.float32)
 
 
 def main():
@@ -118,8 +124,8 @@ def main():
         picks = [it for it in idx if it["frame"] < len(g)]
         picks = picks[:: max(1, len(picks) // 6)][:6]
         if picks:
-            ref = np.stack([gray_image(str(d / it["file"])) for it in picks])
-            got = np.stack([g[it["frame"]] for it in picks])
+            ref = np.stack([luma_image(str(d / it["file"])) for it in picks])
+            got = np.stack([luma_image(a.video, it["frame"]) for it in picks])
             lo, hi = np.percentile(got, 1) - np.percentile(ref, 1), np.percentile(got, 99) - np.percentile(ref, 99)
             err = float(np.abs(got - ref).mean())
             check("contraste igual ao dos stills", err <= 0.02 and lo <= 0.025 and hi >= -0.025, f"erro médio {err * 255:.1f}/255, preto {lo * 255:+.0f}, branco {hi * 255:+.0f} ({len(picks)} frames)")
@@ -131,6 +137,12 @@ def main():
         run_len = run_len + 1 if s else 0
         longest = max(longest, run_len)
     check("sem trecho parado longo", longest / fps <= a.static_sec, f"maior trecho parado: {longest / fps:.2f}s", blocking=False)
+
+    # Pop de 1 frame: um quadro diferente dos dois vizinhos, que são iguais entre si (elemento que pisca, frame errado no corte).
+    if len(g) > 2:
+        skip = np.abs(g[2:] - g[:-2]).mean((1, 2))
+        pops = [i + 1 for i in range(len(skip)) if motion[i] > 0.02 and motion[i + 1] > 0.02 and skip[i] < 0.25 * min(motion[i], motion[i + 1])]
+        check("sem pop de 1 frame", not pops, "nenhum" if not pops else "frames " + ", ".join(f"{p} ({p / fps:.2f}s)" for p in pops[:6]), blocking=False)
 
     dark = mean < 0.02
     check("sem frames pretos no meio", not dark[int(fps * 0.5):-int(fps * 0.5) or None].any(), f"{int(dark.sum())} frames quase pretos", blocking=False)
