@@ -55,6 +55,9 @@ def main():
     ap.add_argument("--tol", type=float, default=18.0)
     ap.add_argument("--feather", type=int, default=3, help="desfoque da borda em px")
     ap.add_argument("--svg", action="store_true")
+    ap.add_argument("--model", default="u2net", help="rembg: u2net (geral) ou u2net_human_seg (pessoas)")
+    ap.add_argument("--start", type=float, default=0.0, help="segundo inicial; os arquivos mantêm o número do frame original")
+    ap.add_argument("--end", type=float, default=None)
     ap.add_argument("-o", "--out", default="public/roto")
     a = ap.parse_args()
     out = pathlib.Path(a.out)
@@ -65,15 +68,20 @@ def main():
     if a.backend == "rembg":
         from rembg import new_session
 
-        session = new_session("u2net")
+        session = new_session(a.model)
     mog = cv2.createBackgroundSubtractorMOG2(history=200, varThreshold=24, detectShadows=False)
     key = [int(v) for v in a.key.split(",")]
     frames, i, w, h = [], 0, 0, 0
     while True:
         ok, frame = cap.read()
-        if not ok:
+        if not ok or (a.end is not None and i > a.end * fps):
             break
         h, w = frame.shape[:2]
+        if i < a.start * fps:
+            if a.backend == "mog2":
+                mog.apply(frame)  # o fundo continua sendo aprendido antes do trecho
+            i += 1
+            continue
         if a.backend == "rembg":
             m = mask_rembg(frame, session)
         elif a.backend == "chroma":

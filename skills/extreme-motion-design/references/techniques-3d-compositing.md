@@ -35,6 +35,19 @@ import track from '../public/track/logo.json';
 - Escolha um ponto com textura e contraste; superfícies lisas não rastreiam.
 - Suavize (`--smooth`) para overlays; não suavize quando o elemento precisa colar no pixel.
 
+### Rosto e mão (gráfico preso ao corpo)
+
+```bash
+uv run <skill>/scripts/track.py footage.mp4 --face -o public/track/rosto.json --smooth 5
+uv run --with mediapipe <skill>/scripts/track.py footage.mp4 --hand -o public/track/mao.json --smooth 3
+```
+- `--face` (YuNet, só OpenCV) devolve por frame o centro, a largura, a altura e o `roll` do rosto. Serve para coroa, chapéu, selo em cima da cabeça, etiqueta ao lado do rosto. Um `x,y` depois da flag escolhe o rosto mais perto do ponto.
+- `--hand` (MediaPipe) devolve o centro da palma, o tamanho, o ângulo, a ponta do indicador, a ponta do polegar e `pinch`. Serve para objeto na palma e para "pegar" um elemento entre os dedos (posição no meio das duas pontas).
+- Frame sem detecção vem com `"found": false` e valor interpolado: esconda o elemento nesses frames ou aceite o salto, não finja rastreio.
+- Rosto de perfil ou olhando para baixo não é detectado (medido: uma pessoa de lado, mexendo no celular, ficou sem detecção em todos os frames). Para ela use `--point` no cabelo, começando num frame em que ela já está em quadro.
+- Filmagem de celular na mão: desenhe tudo no sistema de coordenadas da filmagem (um contêiner do tamanho dela, escalado para a composição) para rastreio, câmera e gráfico usarem os mesmos números.
+- 3D preso à mão: `ThreeCanvas` com câmera ortográfica (`orthographic camera={{zoom: 1, position: [0, 0, 1000]}}`), uma unidade igual a um px. A posição do objeto é o ponto rastreado convertido para a tela. A prop `camera` do canvas não reage por frame: mova o grupo, não a câmera.
+
 ## Match moving
 
 - Plano (tela de celular, placa, parede): `track.py --quad x0,y0,x1,y1,x2,y2,x3,y3` (TL, TR, BR, BL) e `<CornerPin track width height>` para colar a UI no plano com perspectiva correta.
@@ -49,5 +62,7 @@ uv run <skill>/scripts/roto.py footage.mp4 --backend rembg -o public/roto --svg
 ```
 - `rembg`: pessoa ou objeto em destaque, baixa o modelo do GitHub, cerca de 1 a 3 fps em CPU.
 - `mog2`: câmera fixa, separa o que se move do fundo. `chroma`: fundo de cor sólida.
+- `--model u2net_human_seg` recorta pessoas melhor que o modelo geral. `--start` e `--end` (segundos) limitam o trecho; os arquivos mantêm o número do frame original.
+- Texto atrás do sujeito: filmagem, depois o texto, depois o PNG do recorte por cima (`<Img src={staticFile(`roto/frame_${n}.png`)} />`). Medido em 464x832 em CPU: cerca de 1 frame por segundo.
 - Saídas: PNG com alfa por frame (`<Img src={staticFile(\`roto/frame_${i}.png\`)} />`) e `contours.json` com paths SVG por frame para roto estilizado (traço desenhado, preenchimento chapado, em twos).
 - Qualidade de cinema (cabelo, movimento rápido): SAM 2 ou MatAnyone em GPU; o formato de saída é o mesmo.

@@ -11,6 +11,10 @@ Serve para qualquer voz que não devolve tempos por palavra: modelo local fora d
   uv run scripts/align.py public/audio/narration.wav roteiro.txt
   uv run scripts/align.py voz.wav roteiro.txt -o public/audio/narration --lang pt --model small
   uv run scripts/align.py voz.wav roteiro.txt --against public/audio/narration.words.json   # mede o erro
+  uv run scripts/align.py filmagem.mp4 --transcribe -o public/audio/fala     # sem roteiro: escreve o que foi dito
+
+Com --transcribe não há roteiro: sai o que o Whisper ouviu, com tempos, para legendar a fala de uma filmagem.
+Leia e corrija a grafia no <out>.txt e rode de novo com ele como roteiro: o texto corrigido ganha os mesmos tempos.
 
 O roteiro manda no texto (o que aparece na tela); o Whisper só empresta os tempos. `mismatch` conta
 palavras ouvidas diferente do roteiro (pronúncia errada, texto trocado, número por extenso) e
@@ -91,17 +95,31 @@ def align(script_words: list[str], heard: list[dict], duration: float) -> tuple[
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("wav")
-    ap.add_argument("script", help="roteiro .txt com o texto exibido")
+    ap.add_argument("script", nargs="?", help="roteiro .txt com o texto exibido")
+    ap.add_argument("--transcribe", action="store_true", help="sem roteiro: usa o que foi ouvido")
     ap.add_argument("-o", "--out", default=None, help="prefixo de saída (padrão: o do wav)")
     ap.add_argument("--lang", default="pt")
     ap.add_argument("--model", default="small", help="tiny, base, small (padrão), medium")
     ap.add_argument("--against", default=None, help="words.json de referência: imprime o erro médio de início de palavra")
     a = ap.parse_args()
 
-    script_words = [w for w in pathlib.Path(a.script).read_text(encoding="utf-8").split() if re.search(r"\w", w)]
+    if not a.script and not a.transcribe:
+        ap.error("informe o roteiro ou --transcribe")
     audio = decode(a.wav)
     duration = len(audio) / 16000
     heard = transcribe(audio, a.lang, a.model)
+    if a.transcribe:
+        out = pathlib.Path(a.out) if a.out else pathlib.Path(a.wav).with_suffix("")
+        out.parent.mkdir(parents=True, exist_ok=True)
+        words = [{"word": h["word"], "spoken": h["word"], "start": round(h["start"], 3), "end": round(h["end"], 3)} for h in heard]
+        text = " ".join(w["word"] for w in words)
+        meta = {"text": text, "provider": "transcribe", "voice": None, "duration": round(duration, 3), "wpm": round(len(words) / max(duration, 0.1) * 60), "approx": False, "words": words}
+        pathlib.Path(str(out) + ".words.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1), encoding="utf-8")
+        pathlib.Path(str(out) + ".txt").write_text(text + "\n", encoding="utf-8")
+        print(json.dumps({"out": str(out) + ".words.json", "text": str(out) + ".txt", "words": len(words), "duration": round(duration, 2)}, ensure_ascii=False))
+        print(text, file=sys.stderr)
+        return
+    script_words = [w for w in pathlib.Path(a.script).read_text(encoding="utf-8").split() if re.search(r"\w", w)]
     words, missing, differ = align(script_words, heard, duration)
     wpm = len(words) / max(duration, 0.1) * 60
     out = pathlib.Path(a.out) if a.out else pathlib.Path(a.wav).with_suffix("")
