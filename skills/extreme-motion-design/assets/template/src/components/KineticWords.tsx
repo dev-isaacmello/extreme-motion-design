@@ -1,6 +1,7 @@
 import React from 'react';
 import {AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig} from 'remotion';
 import {clamp, ease, springs} from '../lib/motion';
+import {C} from '../theme';
 
 export type Word = {word: string; start: number; end: number};
 
@@ -21,7 +22,8 @@ export const groupPhrases = (words: Word[], maxWords = 4, gap = 0.35): Word[][] 
 };
 
 /**
- * Tipografia cinética sincronizada à narração (tempos de words.json).
+ * Tipografia cinética sincronizada à narração. Passe WORDS de lib/score (tempos absolutos do vídeo).
+ * Com words.json de um arquivo de voz solto, some o início dele em offsetSec.
  * Cada palavra sobe por uma máscara `lead` frames antes de ser falada; a palavra falada ganha o acento.
  * Com tempos vindos do align.py (que já adianta ~0,1 s), use lead={0}.
  */
@@ -35,7 +37,7 @@ export const KineticWords: React.FC<{
 	maxWords?: number;
 	weight?: number;
 	lead?: number;
-}> = ({words, offsetSec = 0, lead = 3, fontSize = 96, color = '#F5F2EA', accent = '#FFB547', top = '50%', maxWords = 4, weight = 700}) => {
+}> = ({words, offsetSec = 0, lead = 3, fontSize = 96, color = C.ink, accent = C.accent, top = '50%', maxWords = 4, weight = 700}) => {
 	const frame = useCurrentFrame();
 	const {fps} = useVideoConfig();
 	const t = frame / fps - offsetSec;

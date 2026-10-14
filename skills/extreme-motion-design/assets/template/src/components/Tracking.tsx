@@ -1,5 +1,5 @@
 import React from 'react';
-import {interpolate, useCurrentFrame} from 'remotion';
+import {Easing, interpolate, useCurrentFrame} from 'remotion';
 
 // Formatos gerados por scripts/track.py e scripts/matchmove.py.
 export type PointTrack = {fps: number; frames: Array<{f: number; x: number; y: number}>};
@@ -68,4 +68,4 @@ export const CornerPin: React.FC<{
 };
 
 export const progressBetween = (frame: number, a: number, b: number) =>
-	interpolate(frame, [a, b], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+	interpolate(frame, [a, b], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.linear});

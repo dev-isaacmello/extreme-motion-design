@@ -1,0 +1,22 @@
+// Biblioteca de blocos: monte a cena com eles antes de escrever componente novo. Catálogo em references/blocks.md.
+export {BarChart} from './BarChart';
+export type {Bar} from './BarChart';
+export {LineChart} from './LineChart';
+export {Donut} from './Donut';
+export {StatCounter} from './StatCounter';
+export {DeviceFrame} from './DeviceFrame';
+export {LowerThird} from './LowerThird';
+export {Captions, paginate} from './Captions';
+export type {CaptionPage, CaptionWord} from './Captions';
+export {CodeWindow} from './CodeWindow';
+export {CLICK_PAUSE, Cursor} from './Cursor';
+export type {CursorPoint} from './Cursor';
+export {Callout} from './Callout';
+export {Checklist} from './Checklist';
+export {QuoteCard} from './QuoteCard';
+export {LogoSting} from './LogoSting';
+export {Marquee} from './Marquee';
+export {Steps} from './Steps';
+export type {Step} from './Steps';
+export {EXIT, Rise, alpha, mix, surface, trim, useBlock, wrap} from './shared';
+export type {BlockTiming} from './shared';
