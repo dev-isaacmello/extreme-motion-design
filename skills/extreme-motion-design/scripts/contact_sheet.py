@@ -8,6 +8,7 @@
   uv run scripts/contact_sheet.py out/video.mp4 --timeline public/timeline.json -o out/sheet.png
   uv run scripts/contact_sheet.py out/video.mp4 --every 0.5 -o out/sheet.png
   uv run scripts/contact_sheet.py --stills out/stills -o out/sheet.png     # a partir do stills.cjs, sem MP4
+  uv run scripts/contact_sheet.py --images out/dir/A.png,out/dir/B.png --labels A,B -o out/directions.png   # direções lado a lado
 Com --timeline, pega início (+0,15 s), meio e fim (-0,15 s) de cada cena: é onde entradas,
 saídas e cortes quebram. Depois abra a imagem e revise com o checklist de references/qa.md.
 """
@@ -31,6 +32,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("video", nargs="?")
     ap.add_argument("--stills", help="pasta gerada pelo stills.cjs (dispensa o vídeo)")
+    ap.add_argument("--images", help="imagens soltas separadas por vírgula (styleframes das direções)")
+    ap.add_argument("--labels", help="rótulo de cada imagem de --images")
     ap.add_argument("--timeline")
     ap.add_argument("--every", type=float, default=None)
     ap.add_argument("--times", default=None, help="lista em segundos: 0.5,1.2,3")
@@ -38,6 +41,13 @@ def main():
     ap.add_argument("--width", type=int, default=640)
     ap.add_argument("-o", "--out", default="out/contact_sheet.png")
     a = ap.parse_args()
+    if a.images:
+        labels = a.labels.split(",") if a.labels else []
+        tiles = []
+        for i, f in enumerate(a.images.split(",")):
+            im = Image.open(f).convert("RGB")
+            tiles.append((labels[i] if i < len(labels) else pathlib.Path(f).stem, im.resize((a.width, round(im.height * a.width / im.width / 2) * 2))))
+        return save(tiles, a)
     if a.stills:
         d = pathlib.Path(a.stills)
         idx = json.loads((d / "index.json").read_text(encoding="utf-8"))["stills"]
@@ -79,7 +89,7 @@ def save(tiles, a):
         x = pad + (i % a.cols) * (w + pad)
         y = pad + (i // a.cols) * (h + pad + 22)
         sheet.paste(im, (x, y + 22))
-        draw.text((x, y + 4), f"#{i + 1}  {t:6.2f}s", fill=(230, 230, 230))
+        draw.text((x, y + 4), t if isinstance(t, str) else f"#{i + 1}  {t:6.2f}s", fill=(230, 230, 230))
     out = pathlib.Path(a.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     sheet.save(out)

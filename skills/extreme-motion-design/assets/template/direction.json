@@ -1,0 +1,16 @@
+{
+ "concept": "Demonstração das primitivas do template: uma frase por cena, cada cena com uma técnica.",
+ "law": "Tinta escura, papel quente e um único acento âmbar. O acento marca a palavra falada e o objeto em foco, nunca os dois ao mesmo tempo.",
+ "motif": "A linha âmbar que se desenha na abertura volta como forma, como junta do braço e como botão ligado.",
+ "options": [
+  {"name": "A", "idea": "Tipografia grande no centro, fundo quase vazio, movimento só na câmera."},
+  {"name": "B", "idea": "Um objeto por cena à esquerda e a fala embaixo, com o acento passando de objeto em objeto."}
+ ],
+ "chosen": "B",
+ "approved_by": "agent",
+ "scenes": [
+  {"id": "kinetic", "layout": "tipografia central sobre parallax", "entrance": "máscara por palavra", "hero": "a frase"},
+  {"id": "morph-rig", "layout": "duas colunas: forma à esquerda, braço à direita", "entrance": "whip", "hero": "a forma que muda"},
+  {"id": "loop-ui", "layout": "anel à esquerda, controle à direita", "entrance": "zoom out", "hero": "o botão que liga"}
+ ]
+}

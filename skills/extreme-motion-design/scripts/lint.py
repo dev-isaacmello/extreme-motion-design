@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Lint antes do render: partitura (timeline.json + words.json) e código das cenas.
+"""Lint antes do render: contrato de direção (direction.json), partitura (timeline.json + palavras) e código das cenas.
 
-  python3 scripts/lint.py                       # na pasta do projeto: public/timeline.json e src/
+  python3 scripts/lint.py                       # na pasta do projeto: public/timeline.json, direction.json e src/
   python3 scripts/lint.py public/timeline.json --src src --words public/audio/narration.words.json
   python3 scripts/lint.py --json
 
-Pega em segundos o que um render de minutos só mostraria depois: corte no meio de frase, cena com
-texto demais para o tempo, SFX empilhado, API que faz o render divergir do preview, curva fora dos
-tokens. Sai com código 1 se houver FAIL. Só biblioteca padrão.
+Pega em segundos o que um render de minutos só mostraria depois: peça sem direção declarada, cenas com a
+mesma composição e a mesma entrada, corte no meio de frase, cena com texto demais para o tempo, SFX
+empilhado, API que faz o render divergir do preview, curva linear ou fora dos tokens, cor fora do tema.
+Sai com código 1 se houver FAIL. Só biblioteca padrão.
 """
 from __future__ import annotations
 
@@ -36,7 +37,7 @@ CODE_RULES = [
 BEZIER = re.compile(r"\bEasing\.(bezier|in|out|inOut|poly|exp|circle|back|cubic|quad)\b")
 
 
-def lint_score(tl: dict, words: list[dict] | None) -> list[dict]:
+def lint_score(tl: dict, words: list[dict] | None, absolute: bool = False) -> list[dict]:
     out = []
 
     def add(level, where, msg):
@@ -72,10 +73,10 @@ def lint_score(tl: dict, words: list[dict] | None) -> list[dict]:
         if tl.get("narration"):
             add("WARN", "narração", "partitura tem narração mas o words.json não foi encontrado: checagens de fala puladas")
         return out
-    off = float((tl.get("narration") or {}).get("start", 0))
-    if off < 0.1:
-        add("WARN", "narração", f"a voz começa em {off:.2f} s: dê 0,1 a 0,3 s depois do corte")
+    off = 0.0 if absolute else float((tl.get("narration") or {}).get("start", 0))
     t = [(w["word"], w["start"] + off, w["end"] + off) for w in words]
+    if t[0][1] < 0.1:
+        add("WARN", "narração", f"a voz começa em {t[0][1]:.2f} s: dê 0,1 a 0,3 s depois do corte")
     if t[-1][2] > dur + 0.02:
         add("FAIL", "narração", f"a voz termina em {t[-1][2]:.2f} s e o vídeo em {dur:.2f} s")
     elif dur - t[-1][2] < END_HOLD:
@@ -97,13 +98,34 @@ def lint_score(tl: dict, words: list[dict] | None) -> list[dict]:
     return out
 
 
+def linear_interpolates(text: str) -> list[int]:
+    """Linhas com interpolate(frame, ...) sem easing: o padrão do Remotion é linear, a marca do amador."""
+    hits = []
+    for m in re.finditer(r"\binterpolate\s*\(", text):
+        depth, i = 1, m.end()
+        while i < len(text) and depth:
+            depth += {"(": 1, ")": -1}.get(text[i], 0)
+            i += 1
+        call = text[m.end():i - 1]
+        first = call.split(",", 1)[0].strip()
+        if re.search(r"frame|^t$|time", first, re.I) and "easing" not in call:
+            hits.append(text.count("\n", 0, m.start()) + 1)
+    return hits
+
+
 def lint_code(src: pathlib.Path) -> list[dict]:
-    out, fades, moves = [], 0, 0
+    out, fades, moves, loose = [], 0, 0, []
     for f in sorted(src.rglob("*.ts*")):
         if "node_modules" in f.parts:
             continue
         in_tokens = f.name == "motion.ts"
-        for n, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
+        text = f.read_text(encoding="utf-8")
+        if not in_tokens:
+            for n in linear_interpolates(text):
+                out.append({"level": "WARN", "where": f"{f.relative_to(src.parent)}:{n}", "msg": "interpolate() sem easing é movimento linear: use tween() ou keys() com um token de ease.*"})
+        if f.name not in ("theme.ts", "theme.tsx"):
+            loose += [(f"{f.relative_to(src.parent)}:{text.count(chr(10), 0, m.start()) + 1}", m.group(0)) for m in re.finditer(r"#[0-9a-fA-F]{6}\b|#[0-9a-fA-F]{3}\b(?![0-9a-fA-F])", "\n".join(l.split("//")[0] for l in text.splitlines()))]
+        for n, line in enumerate(text.splitlines(), 1):
             code = line.split("//")[0] if "://" not in line else line
             for rx, level, msg in CODE_RULES:
                 if re.search(rx, code):
@@ -112,8 +134,64 @@ def lint_code(src: pathlib.Path) -> list[dict]:
                 out.append({"level": "WARN", "where": f"{f.relative_to(src.parent)}:{n}", "msg": "curva criada na cena: use os tokens ease.* de lib/motion.ts"})
             fades += len(re.findall(r"\bopacity\s*[:=]", code))
             moves += len(re.findall(r"\b(translate[XYZ3d]*|scale[XY]?|rotate[XYZ]?|clipPath|strokeDashoffset)\b", code))
+    if loose:
+        sample = ", ".join(f"{c} em {w}" for w, c in loose[:4])
+        out.append({"level": "WARN", "where": "src", "msg": f"{len(loose)} cores escritas fora de theme.ts ({sample}): a paleta da peça mora em public/brand.json"})
     if fades >= 6 and fades > 2 * max(moves, 1):
         out.append({"level": "WARN", "where": "src", "msg": f"{fades} usos de opacity contra {moves} de transform, máscara ou traço: tudo entrando com fade tem cara de gerado"})
+    return out
+
+
+DIRECTION_FIELDS = ("concept", "law", "motif", "options", "chosen", "approved_by", "scenes")
+
+
+def lint_direction(root: pathlib.Path, tl: dict) -> list[dict]:
+    """Contrato de direção: o que a peça declara antes de qualquer cena existir (references/direction.md)."""
+    out = []
+
+    def add(level, where, msg):
+        out.append({"level": level, "where": where, "msg": msg})
+
+    p = root / "direction.json"
+    if not p.is_file():
+        add("FAIL", "direction.json", "a peça não tem contrato de direção: escreva direction.json antes de animar (references/direction.md)")
+        return out
+    d = json.loads(p.read_text(encoding="utf-8"))
+    for k in DIRECTION_FIELDS:
+        if not d.get(k):
+            add("FAIL", "direction.json", f"falta '{k}'")
+    if out:
+        return out
+    if len(d["options"]) < 2:
+        add("FAIL", "direction.json", "só uma direção considerada: monte de 2 a 3 styleframes de direções diferentes antes de escolher")
+    if d["chosen"] not in [o.get("name") for o in d["options"]]:
+        add("FAIL", "direction.json", f"'chosen' ({d['chosen']}) não é uma das opções")
+    if d["approved_by"] == "agent":
+        add("WARN", "direction.json", "a direção foi escolhida pelo agente, sem aprovação do usuário: diga isso na entrega")
+    elif d["approved_by"] != "user":
+        add("FAIL", "direction.json", "'approved_by' é 'user' (o usuário escolheu) ou 'agent' (o pedido delegou a escolha)")
+    declared = {s.get("id"): s for s in d["scenes"]}
+    ids = [s["id"] for s in tl.get("scenes", [])]
+    for i in ids:
+        s = declared.get(i)
+        if not s:
+            add("FAIL", i, "cena sem declaração em direction.json (layout, entrance, hero)")
+        elif not all(s.get(k) for k in ("layout", "entrance", "hero")):
+            add("FAIL", i, "a declaração da cena precisa de layout, entrance e hero")
+    seq = [declared[i] for i in ids if i in declared and declared[i].get("layout") and declared[i].get("entrance")]
+    if len(seq) >= 3:
+        layouts = [s["layout"] for s in seq]
+        top = max(set(layouts), key=layouts.count)
+        if len(set(layouts)) == 1:
+            add("FAIL", "direção", f"todas as cenas declaram o mesmo layout ('{top}'): isso é slide de marca, não filme")
+        elif layouts.count(top) > len(layouts) / 2:
+            add("WARN", "direção", f"{layouts.count(top)} de {len(layouts)} cenas usam o layout '{top}'")
+        entrances = [s["entrance"] for s in seq]
+        if len(set(entrances)) == 1:
+            add("FAIL", "direção", f"todas as cenas entram do mesmo jeito ('{entrances[0]}')")
+    for a, b in zip(seq, seq[1:]):
+        if (a["layout"], a["entrance"]) == (b["layout"], b["entrance"]):
+            add("WARN", f"{a['id']} > {b['id']}", f"cenas vizinhas com o mesmo layout e a mesma entrada ({a['layout']}, {a['entrance']})")
     return out
 
 
@@ -141,9 +219,15 @@ def main():
     if wp is None and (tl.get("narration") or {}).get("file"):
         wp = tlp.parent / (str(pathlib.Path(tl["narration"]["file"]).with_suffix("")) + ".words.json")
     words = json.loads(wp.read_text(encoding="utf-8"))["words"] if wp and wp.exists() else None
+    cues = tlp.parent / "cues.json"
+    absolute = False
+    if not a.words and cues.exists():  # score.py: palavras já no tempo do vídeo, com qualquer origem de voz
+        cw = json.loads(cues.read_text(encoding="utf-8")).get("words") or []
+        words, absolute = (cw or words), bool(cw)
     src = pathlib.Path(a.src) if a.src else tlp.parent.parent / "src"
+    root = tlp.resolve().parent.parent
 
-    res = lint_score(tl, words) + (lint_code(src) if src.is_dir() else []) + lint_env(tlp.resolve().parent.parent)
+    res = lint_direction(root, tl) + lint_score(tl, words, absolute) + (lint_code(src) if src.is_dir() else []) + lint_env(root)
     fails = sum(r["level"] == "FAIL" for r in res)
     if a.json:
         print(json.dumps({"pass": not fails, "fails": fails, "warns": len(res) - fails, "issues": res}, ensure_ascii=False, indent=1))
